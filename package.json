@@ -16,6 +16,7 @@
     "glob": "~4.3.1",
     "request": "~2.51.0",
     "sax": "*",
+    "soap": "*",
     "jade": "~1.8.1"
   },
   "devDependencies": {
