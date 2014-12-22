@@ -26,7 +26,9 @@ module.exports = function (grunt) {
         files: [
           'app.js',
           'api/**/*.js',
-          'config/*.js'
+          'config/*.js',
+          'SFLib/*.js',
+          'SdataLib/*.js'
         ],
         tasks: ['develop', 'delayed-livereload']
       }
