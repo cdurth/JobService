@@ -1,0 +1,5 @@
+<AspDotNetStorefrontImport Version="7.1" SetImportFlag="true" AutoLazyAdd="true" AutoCleanup="true" Verbose="false" TransactionsEnabled="true">
+  <Query Name="Orders" RowName="order">
+    <SQL><![CDATA[SELECT OrderNumber FROM dbo.Orders WHERE THUB_POSTED = NULL]]></SQL>
+  </Query>
+</AspDotNetStorefrontImport>

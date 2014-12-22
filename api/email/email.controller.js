@@ -11,11 +11,21 @@ exports.index = function(req, res) {
 
 exports.checkEmail = function(req, res){
   var sdPasreStream=sDataParse();
+  var count = 0;
   sdPasreStream.on('data',function(sDataObj){
+    count++;
     console.log(sDataObj);
   });
   sdPasreStream.on('end',function(){
-    console.log('sDataParseEnd')
+    console.log('sDataParseEnd');
+    console.log('count: '+ count);
+    if (count === 1) {
+      res.send('email matched');
+    } else if (count > 1) {
+      res.send('multiple emails matched');
+    } else {
+      res.send('email not found');
+    }
   });
   var r=request({url:"http://66.161.168.57/Sdata/MasApp/MasContract/ABC/AR_Customer?where=EmailAddress eq '"+ req.params.email +"'"
   ,auth:{user:'SdataUser',pass:'password'}

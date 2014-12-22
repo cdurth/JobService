@@ -17,6 +17,8 @@
     "request": "~2.51.0",
     "sax": "*",
     "soap": "*",
+    "xml2json": "*",
+    "xmldoc": "*",
     "jade": "~1.8.1"
   },
   "devDependencies": {
