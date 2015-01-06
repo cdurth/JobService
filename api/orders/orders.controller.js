@@ -24,9 +24,7 @@ module.exports = {
 			if (configObj.createCustomers) {
 				sDataReq.SDataGet(configObj,query,function(results){
 
-					var custsToCreate = records;
-
-					var matched = function(element){
+					var custMatched = function(element){
 						for(result in results){
 							if(results[result].EMAILADDRESS === element.email){
 								return false;
@@ -34,8 +32,9 @@ module.exports = {
 						}
 						return true;
 					};
+
 					// list of customers that need created
-					custsToCreate = custsToCreate.filter(matched);
+					var custsToCreate = records.filter(custMatched);
 					res.send(custsToCreate);
 					// count = 0
 					// totalCallbacks = orders.RecordCount;
