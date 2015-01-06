@@ -1,0 +1,25 @@
+{
+    "user": "<userid>",
+    "jobid": "<jobid>",
+    "timestamp": "<timestamp>",
+    "sdata": {
+        "url": "http: //66.161.168.57/Sdata/MasApp/MasContract",
+        "company": "ABC",
+        "createCustomers": true,
+        "defaultCustomer": "",
+        "auth": {
+            "username": "SdataUser",
+            "password": "password"
+        }
+    },
+    "aspdsf": {
+        "url": "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx"
+    },
+    "logging": {
+        "url": "<monogurl/id>",
+        "auth": {
+            "username": "<username>",
+            "password": "<password>"
+        }
+    }
+}
