@@ -6,20 +6,21 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "~4.10.6",
-    "serve-favicon": "~2.1.7",
-    "morgan": "~1.5.0",
-    "cookie-parser": "~1.3.3",
     "body-parser": "~1.10.0",
     "compression": "~1.2.2",
-    "method-override": "~2.3.0",
+    "cookie-parser": "~1.3.3",
+    "express": "~4.10.6",
     "glob": "~4.3.1",
+    "jade": "~1.8.1",
+    "lodash": "^2.4.1",
+    "method-override": "~2.3.0",
+    "morgan": "~1.5.0",
     "request": "~2.51.0",
     "sax": "*",
+    "serve-favicon": "~2.1.7",
     "soap": "*",
     "xml2json": "*",
-    "xmldoc": "*",
-    "jade": "~1.8.1"
+    "xmldoc": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

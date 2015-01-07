@@ -11,54 +11,11 @@ module.exports = {
 	process:function(req,res){
 		module.exports.index(req,res,function(orders){
 			configObj = req.body.sdata;
-
 			records = orders["Records"];
-			emails = [];
-
-			for(var record in records){
-					emails.push(records[record].email);
-			}
-
-			var	query = "AR_Customer?where=EmailAddress eq '"+ emails.join("' or EmailAddress eq '") +"' or EmailAddress eq 'corey@corey.com' or EmailAddress eq 'corey2@corey.com'";
-
-			if (configObj.createCustomers) {
-				sDataReq.SDataGet(configObj,query,function(results){
-
-					var custMatched = function(element){
-						for(result in results){
-							if(results[result].EMAILADDRESS === element.email){
-								return false;
-							}
-						}
-						return true;
-					};
-
-					// list of customers that need created
-					var custsToCreate = records.filter(custMatched);
-					res.send(custsToCreate);
-					// count = 0
-					// totalCallbacks = orders.RecordCount;
-					// results = [];
-					// myCallback = function(result){
-					// 	console.log('callback');
-					// 	count++;
-					// 	results[count] = result;
-					// 	if (count === totalCallbacks){
-					// 		console.log(results);
-					// 	}
-					// }
-
-
-				});
-			}
-
-			//
-			//
-			// for(record in records){
-			// 	console.log(records[record].email);
-			// 	sDataReq.validateEmail(records[record].email,myCallback);
-			// }
-
+			sDataReq.validateCustomers(configObj,records,function(callback){
+				// at this point, customers have been created & customerNo inserted
+				res.send(callback);
+			});
 		});
 	},
 	index:function(req,res,callback){
