@@ -26,7 +26,6 @@ module.exports = {
         module.exports.matchCustomers(configObj,emails,records,function(res){
           callback(res);
         });
-        //callback(custs);
       });
     }
   },
@@ -53,9 +52,6 @@ module.exports = {
       var custMatched = function(element){
         for(var i = 0; i < results.length; i++){
           if(results[i].EMAILADDRESS === element.email){
-            // adds customer number to object if found
-            // console.log(results[i]);
-            // element["customerNo"] = results[i].CUSTOMERNO;
             return false;
           }
         }
