@@ -83,11 +83,14 @@ module.exports = {
       var count = 0;
       var totalCallbacks = custsToCreate.length;
       var results = [];
-      var myCallback = function(result){
+      var myCallback = function(err,result){
+        if(err){
+          //do stuff with error
+        }
       	count++;
       	results[count] = result;
       	if (count === totalCallbacks){
-          callback(results);
+          callback(null,results);
       	}
       };
 
@@ -125,7 +128,7 @@ module.exports = {
 
     sdPasreStream.on('end',function(){
       returnObj = returnArray;
-      callback(returnObj);
+      callback(null,returnObj);
     });
 
     var body = '<entry xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom"><sdata:payload>';
@@ -147,10 +150,7 @@ module.exports = {
       if(resp.statusCode==200){
         r.pipe(sdPasreStream);
       } else {
-        debugger;
-        resp.on('end',function(){
-          console.log(resp);
-        })
+        callback(new Error('Bad Stuff'),null);
       }
     });
   },
