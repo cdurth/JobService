@@ -7,6 +7,9 @@ var request=require('request');
 var sDataParse=require(appDir + '/SDataLib/SDataParse');
 
 module.exports = {
+  createSalesOrder:function(configObj,order,callback){
+    callback(order);
+  },
   validateCustomers:function(configObj,records,callback) {
     var emails = [];
     // build email array for checking existing customers
@@ -21,8 +24,6 @@ module.exports = {
       var	query = "AR_Customer?where=EmailAddress eq '"+ emails.join("' or EmailAddress eq '") +"'";
       configObj["query"] = query;
       module.exports.createCustomer(configObj,emails,records,function(custs){
-        var	query = "AR_Customer?where=EmailAddress eq '"+ emails.join("' or EmailAddress eq '") +"'";
-        configObj["query"] = query;
         module.exports.matchCustomers(configObj,emails,records,function(res){
           callback(res);
         });
@@ -61,6 +62,7 @@ module.exports = {
       var custsToCreate = records.filter(custMatched);
 
       if (_.isEmpty(custsToCreate)){
+        // createCust option enabled, but no new customers to create, return
         callback(null);
       }
 
@@ -76,8 +78,8 @@ module.exports = {
         return false;
       });
 
-      var query = "AR_Customer";
-      configObj["query"] = query;
+      var busObj = "COREY";
+      configObj["busObj"] = busObj;
       var count = 0;
       var totalCallbacks = custsToCreate.length;
       var results = [];
@@ -115,7 +117,7 @@ module.exports = {
     var returnObj = {};
     var returnArray = [];
     var sdPasreStream=sDataParse();
-    var url = postObj.url +'/'+ postObj.company +'/'+ postObj.query;
+    var url = postObj.url +'/'+ postObj.company +'/'+ postObj.busObj;
 
     sdPasreStream.on('data',function(sDataObj){
       returnArray.push(sDataObj);
@@ -127,10 +129,11 @@ module.exports = {
     });
 
     var body = '<entry xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom"><sdata:payload>';
-        body+= '<'+ postObj.query +' sdata:uri="'+postObj.url+'/'+postObj.company+'/'+postObj.query+'" xmlns="">';
+        body+= '<'+ postObj.busObj +' sdata:uri="'+postObj.url+'/'+postObj.company+'/'+postObj.busObj+'" xmlns="">';
         body+= postObj.payload;
-        body+= '</'+ postObj.query +'>';
+        body+= '</'+ postObj.busObj +'>';
         body+= '</sdata:payload></entry>';
+
 
     var r = request.post({
       url:url,
@@ -143,6 +146,11 @@ module.exports = {
     r.on('response', function (resp) {
       if(resp.statusCode==200){
         r.pipe(sdPasreStream);
+      } else {
+        debugger;
+        resp.on('end',function(){
+          console.log(resp);
+        })
       }
     });
   },

@@ -12,9 +12,22 @@ module.exports = {
 		module.exports.index(req,res,function(orders){
 			configObj = req.body.sdata;
 			records = orders["Records"];
-			sDataReq.validateCustomers(configObj,records,function(callback){
+			sDataReq.validateCustomers(configObj,records,function(orders){
 				// at this point, customers have been created & customerNo inserted
-				res.send(callback);
+				var count = 0;
+				var totalCallbacks = orders.length;
+				var results = [];
+				var myCallback = function(result){
+					count++;
+					results[count] = result;
+					if (count === totalCallbacks){
+						res.send(results);
+					}
+				};
+
+				for(var i = 0; i < orders.length; i++){
+					sDataReq.createSalesOrder(configObj,orders[i],myCallback);
+				}
 			});
 		});
 	},

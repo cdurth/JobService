@@ -18,6 +18,8 @@ module.exports = function (options, callback) {
 module.exports.SDataParse=SDataParse;
 function SDataParse(options,callback){
     var SDataParseSelf=this;
+    // SDataParseSelf["options"] = {};
+    // SDataParseSelf["options"]["debug"]=true;
     this.options=options || {};
     this.options.objectMode=true;
     Transform.call(this,this.options);
