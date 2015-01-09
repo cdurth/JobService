@@ -9,10 +9,10 @@ var SFLib = require(appDir + '/SFLib/SFLib');
 
 module.exports = {
 	process:function(req,res){
-		module.exports.index(req,res,function(orders){
+		module.exports.index(req,res,function(err,orders){
 			configObj = req.body.sdata;
 			records = orders["Records"];
-			sDataReq.validateCustomers(configObj,records,function(orders){
+			sDataReq.validateCustomers(configObj,records,function(err,orders){
 				// at this point, customers have been created & customerNo inserted
 				var count = 0;
 				var totalCallbacks = orders.length;
@@ -39,7 +39,7 @@ module.exports = {
 		var url = 'http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx';
 		var orderNumbers = [];
 		// query to get all new orders
-		SFLib.query(order_headers,url, function(ordersJSON){
+		SFLib.query(order_headers,url, function(err,ordersJSON){
 			tmpOrders = JSON.parse(ordersJSON);
 			orders = tmpOrders["AspDotNetStorefrontImportResult"]["Query"]["order"];
 
@@ -53,7 +53,7 @@ module.exports = {
 			finalObj["RecordCount"] = orderNumbers.length;
 			// query to get all order details
 			var order_details = "SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN ('"+ orderNumbers.join("','") +"')";
-			SFLib.query(order_details,url, function(detailsJSON){
+			SFLib.query(order_details,url, function(err,detailsJSON){
 				tmpDetails = JSON.parse(detailsJSON);
 				details = tmpDetails["AspDotNetStorefrontImportResult"]["Query"]["order"];
 
@@ -71,7 +71,7 @@ module.exports = {
 								if(details[detail].ShippingDetail !== undefined){
 									rawAddress = details[detail].ShippingDetail;
 									// parse shipping data
-									SFLib.parseAddress(rawAddress, function(addressJSON){
+									SFLib.parseAddress(rawAddress, function(err,addressJSON){
 										tmpAddress = JSON.parse(addressJSON);
 										address = tmpAddress["Detail"]["Address"];
 										details[detail].ShippingDetail = address;
@@ -85,7 +85,7 @@ module.exports = {
 						}
 				}
 				finalObj["Records"] = orders;
-				callback(finalObj);
+				callback(null,finalObj);
 			});
 		});
 	}

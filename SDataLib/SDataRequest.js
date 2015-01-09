@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; //master
 
 var _ = require('lodash');
 var path = require('path');
@@ -25,7 +25,7 @@ module.exports = {
       configObj["query"] = query;
       module.exports.createCustomer(configObj,emails,records,function(custs){
         module.exports.matchCustomers(configObj,emails,records,function(res){
-          callback(res);
+          callback(null,res);
         });
       });
     }
@@ -48,7 +48,7 @@ module.exports = {
     });
   },
   createCustomer:function(configObj,emails,records,callback){
-    module.exports.SDataGet(configObj,function(results){
+    module.exports.SDataGet(configObj,function(err,results){
       // filters out existing customers & inserts customerNo
       var custMatched = function(element){
         for(var i = 0; i < results.length; i++){
@@ -63,7 +63,7 @@ module.exports = {
 
       if (_.isEmpty(custsToCreate)){
         // createCust option enabled, but no new customers to create, return
-        callback(null);
+        callback(null,null);
       }
 
       // recalculate emails to build index
@@ -83,11 +83,14 @@ module.exports = {
       var count = 0;
       var totalCallbacks = custsToCreate.length;
       var results = [];
-      var myCallback = function(result){
+      var myCallback = function(err,result){
+        if(err){
+          //do stuff with error
+        }
       	count++;
       	results[count] = result;
       	if (count === totalCallbacks){
-          callback(results);
+          callback(null,results);
       	}
       };
 
@@ -125,7 +128,7 @@ module.exports = {
 
     sdPasreStream.on('end',function(){
       returnObj = returnArray;
-      callback(returnObj);
+      callback(null,returnObj);
     });
 
     var body = '<entry xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom"><sdata:payload>';
@@ -147,10 +150,7 @@ module.exports = {
       if(resp.statusCode==200){
         r.pipe(sdPasreStream);
       } else {
-        debugger;
-        resp.on('end',function(){
-          console.log(resp);
-        })
+        callback(new Error('Bad Stuff'),null);
       }
     });
   },
