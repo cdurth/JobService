@@ -8,7 +8,7 @@ var sDataParse=require(appDir + '/SDataLib/SDataParse');
 
 module.exports = {
   createSalesOrder:function(configObj,order,callback){
-    callback(order);
+    callback(null,order);
   },
   validateCustomers:function(configObj,records,callback) {
     var emails = [];
@@ -23,15 +23,15 @@ module.exports = {
     if (configObj.createCustomers) {
       var	query = "AR_Customer?where=EmailAddress eq '"+ emails.join("' or EmailAddress eq '") +"'";
       configObj["query"] = query;
-      module.exports.createCustomer(configObj,emails,records,function(custs){
-        module.exports.matchCustomers(configObj,emails,records,function(res){
+      module.exports.createCustomer(configObj,emails,records,function(err,custs){
+        module.exports.matchCustomers(configObj,emails,records,function(err,res){
           callback(null,res);
         });
       });
     }
   },
   matchCustomers:function(configObj,emails,records,callback){
-    module.exports.SDataGet(configObj,function(results){
+    module.exports.SDataGet(configObj,function(err,results){
       var custMatched = function(order){
         for(var i = 0; i < results.length; i++){
           if(results[i].EMAILADDRESS === order.email){
@@ -44,7 +44,7 @@ module.exports = {
       for (var i = 0; i < records.length; i++){
         custMatched(records[i]);
       }
-      callback(records);
+      callback(null,records);
     });
   },
   createCustomer:function(configObj,emails,records,callback){
@@ -167,7 +167,7 @@ module.exports = {
     sdPasreStream.on('end',function(){
       returnObj = returnArray;
       //returns json objects
-      callback(returnObj);
+      callback(null,returnObj);
     });
 
     var r = request({
@@ -179,6 +179,8 @@ module.exports = {
     r.on('response', function (resp) {
       if(resp.statusCode==200){
         r.pipe(sdPasreStream);
+      } else {
+        callback(new Error('Bad Stuff'),null);
       }
     });
   }
