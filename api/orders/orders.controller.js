@@ -17,7 +17,7 @@ module.exports = {
 				var count = 0;
 				var totalCallbacks = orders.length;
 				var results = [];
-				var myCallback = function(result){
+				var myCallback = function(err,result){
 					count++;
 					results[count] = result;
 					if (count === totalCallbacks){

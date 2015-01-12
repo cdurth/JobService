@@ -22,8 +22,8 @@ module.exports.query = function(sql,url,callback) {
     'Content-Length': body.length
   };
 
-  request.post({ url: url, headers: headers, body: body }, function(e, r, b) {
-    if (e || r.statusCode !== 200) { res.send(r.statusCode + "\n" + e); return; }
+  request.post({ url: url, headers: headers, body: body }, function(err, r, b) {
+    if (err || r.statusCode !== 200) { res.send(r.statusCode + "\n" + err); return; }
 
     var document = new xmldoc.XmlDocument(b);
     var bodyNode = document.childNamed('soap:Body');
@@ -32,11 +32,11 @@ module.exports.query = function(sql,url,callback) {
 
     var json = parser.toJson(resRawXml);
     //console.log(json);
-    callback(json);
+    callback(err,json);
 
   });
 }
-
+//TODO: error handling (try catch)
 module.exports.parseAddress = function(xml,callback) {
   var rawXML = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>' + exports.decodeXML(JSON.stringify(xml)).replace(/^"(.*)"$/, '$1');
 
@@ -45,6 +45,6 @@ module.exports.parseAddress = function(xml,callback) {
   //miscEnd = rawXML.substring(rawXML.length-3,rawXML.length);
 
   var json = parser.toJson(rawXML);
-  callback(json);
+  callback(null,json);
 
 }
