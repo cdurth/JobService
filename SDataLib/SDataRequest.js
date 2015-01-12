@@ -8,7 +8,7 @@ var sDataParse=require(appDir + '/SDataLib/SDataParse');
 
 module.exports = {
   createSalesOrder:function(configObj,order,callback){
-    callback(order);
+    callback(null,order);
   },
   validateCustomers:function(configObj,records,callback) {
     var emails = [];
@@ -25,7 +25,7 @@ module.exports = {
       configObj["query"] = query;
       module.exports.createCustomer(configObj,emails,records,function(err,custs){
         module.exports.matchCustomers(configObj,emails,records,function(err,res){
-          callback(res);
+          callback(null,res);
         });
       });
     }
@@ -167,7 +167,7 @@ module.exports = {
     sdPasreStream.on('end',function(){
       returnObj = returnArray;
       //returns json objects
-      callback(returnObj);
+      callback(null,returnObj);
     });
 
     var r = request({
@@ -179,6 +179,8 @@ module.exports = {
     r.on('response', function (resp) {
       if(resp.statusCode==200){
         r.pipe(sdPasreStream);
+      } else {
+        callback(new Error('Bad Stuff'),null);
       }
     });
   }

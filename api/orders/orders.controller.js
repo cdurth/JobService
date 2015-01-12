@@ -21,7 +21,7 @@ module.exports = {
 					count++;
 					results[count] = result;
 					if (count === totalCallbacks){
-						res.send(null,results);
+						res.send(results);
 					}
 				};
 
@@ -39,7 +39,7 @@ module.exports = {
 		var url = 'http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx';
 		var orderNumbers = [];
 		// query to get all new orders
-		SFLib.query(order_headers,url, function(ordersJSON){
+		SFLib.query(order_headers,url, function(err,ordersJSON){
 			tmpOrders = JSON.parse(ordersJSON);
 			orders = tmpOrders["AspDotNetStorefrontImportResult"]["Query"]["order"];
 
@@ -71,7 +71,7 @@ module.exports = {
 								if(details[detail].ShippingDetail !== undefined){
 									rawAddress = details[detail].ShippingDetail;
 									// parse shipping data
-									SFLib.parseAddress(rawAddress, function(addressJSON){
+									SFLib.parseAddress(rawAddress, function(err,addressJSON){
 										tmpAddress = JSON.parse(addressJSON);
 										address = tmpAddress["Detail"]["Address"];
 										details[detail].ShippingDetail = address;
