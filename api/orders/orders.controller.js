@@ -9,19 +9,19 @@ var SFLib = require(appDir + '/SFLib/SFLib');
 
 module.exports = {
 	process:function(req,res){
-		module.exports.index(req,res,function(orders){
+		module.exports.index(req,res,function(err,orders){
 			configObj = req.body.sdata;
 			records = orders["Records"];
-			sDataReq.validateCustomers(configObj,records,function(orders){
+			sDataReq.validateCustomers(configObj,records,function(err,orders){
 				// at this point, customers have been created & customerNo inserted
 				var count = 0;
 				var totalCallbacks = orders.length;
 				var results = [];
-				var myCallback = function(result){
+				var myCallback = function(err,result){
 					count++;
 					results[count] = result;
 					if (count === totalCallbacks){
-						res.send(results);
+						res.send(null,results);
 					}
 				};
 
@@ -53,7 +53,7 @@ module.exports = {
 			finalObj["RecordCount"] = orderNumbers.length;
 			// query to get all order details
 			var order_details = "SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN ('"+ orderNumbers.join("','") +"')";
-			SFLib.query(order_details,url, function(detailsJSON){
+			SFLib.query(order_details,url, function(err,detailsJSON){
 				tmpDetails = JSON.parse(detailsJSON);
 				details = tmpDetails["AspDotNetStorefrontImportResult"]["Query"]["order"];
 
@@ -85,7 +85,7 @@ module.exports = {
 						}
 				}
 				finalObj["Records"] = orders;
-				callback(finalObj);
+				callback(null,finalObj);
 			});
 		});
 	}
