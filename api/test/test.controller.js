@@ -2,11 +2,24 @@ var path = require('path');
 var appDir = path.dirname(require.main.filename);
 var querystring = require('querystring');
 var request = require('request');
-
+var ordersCtl = require(appDir + '/api/orders/orders.controller')
 var sDataParse = require(appDir + '/SDataLib/SDataParse');
+var SDParse=require(appDir + '/SDataLib/SDParse');
 var soap = require('soap');
 var soapWSDL = "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx?wsdl";
 
+exports.sdata = function(req,res) {
+	ordersCtl.index(req,res,function(err,orders){
+		configObj = req.body.sdata;
+		records = orders["Records"];
+		var	query = "SO_SalesOrderHeaderSPECIAL?include=SO_SalesOrderHeaderSPECIALSECOND";
+		configObj["query"] = query;
+		SDParse.Get(configObj,function(err,data){
+			res.type('application/json');
+			res.send(data);
+		});
+	});
+};
 exports.streamTest = function(req, res) {
 	var sdPasreStream = sDataParse();
 	sdPasreStream.on('data', function(sDataObj) {

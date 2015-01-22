@@ -9,6 +9,7 @@ var sDataParse=require(appDir + '/SDataLib/SDataParse');
 module.exports = {
   createSalesOrder:function(configObj,order,callback){
     callback(null,order);
+    
   },
   validateCustomers:function(configObj,records,callback) {
     var emails = [];
@@ -60,7 +61,6 @@ module.exports = {
       };
 
       var custsToCreate = records.filter(custMatched);
-
       if (_.isEmpty(custsToCreate)){
         // createCust option enabled, but no new customers to create, return
         callback(null,null);
@@ -78,7 +78,7 @@ module.exports = {
         return false;
       });
 
-      var busObj = "COREY";
+      var busObj = "AR_Customer";
       configObj["busObj"] = busObj;
       var count = 0;
       var totalCallbacks = custsToCreate.length;
