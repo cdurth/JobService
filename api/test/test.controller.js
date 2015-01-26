@@ -6,6 +6,8 @@ var ordersCtl = require(appDir + '/api/orders/orders.controller')
 var sDataParse = require(appDir + '/SDataLib/SDataParse');
 var SDParse=require(appDir + '/SDataLib/SDParse');
 var soap = require('soap');
+var xmldoc = require('xmldoc');
+var _ = require('lodash');
 var soapWSDL = "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx?wsdl";
 
 exports.sdata = function(req,res) {
@@ -15,6 +17,7 @@ exports.sdata = function(req,res) {
 		var	query = "SO_InvoiceHeaderSPECIAL?include=SO_InvoiceHeaderSPECIALSECOND";
 		configObj["query"] = query;
 		SDParse.Get(configObj,function(err,data){
+			console.log(data.sdatapayload.InvoiceNo);
 			res.type('application/json');
 			res.send(data);
 		});

@@ -16,31 +16,35 @@ module.exports.Get = function(getObj,callback){
        console.log(r.statusCode + "\n" + err);
        return;
     }
-  var test =  module.exports.parse(r.body);
-  callback(err,test);
+    module.exports.parse(r.body,function(err,data){
+      callback(err,data);
+    });
   });
 },
-module.exports.parse = function(xml){
+module.exports.parse = function(xml,callback){
   // get all records
   var document = new xmldoc.XmlDocument(xml);
   var resNode = document.childrenNamed('entry');
 
   // iterate through records, parse and build return object
   for (var i=0; i < resNode.length;i++){
-
     var payload = resNode[i].childNamed('sdata:payload');
-    console.log(payload.length);
+
     var recursion = function (xmlNode){
-      var tmpArray = [];
-      if(xmlNode.children.length < 1){
-        return xmlNode;
-      }
-      var ret = [];
-      xmlNode.eachChild(function(child,index,array){
-        ret.push(recursion(child));
-      });
-      return ret;
+     var ret = [];
+     xmlNode.eachChild(function(child,index,array){
+       if(child.children.length < 1) {
+           ret[child.name] = child.val;
+       } else {
+         //TODO: more sanitization may be necessary
+         if(xmlNode.name.search(':') > 0){
+          xmlNode.name = xmlNode.name.replace(/:/g, '');
+         }
+           ret[xmlNode.name] = recursion(child);
+       }
+     });
+     return ret;
     };
-    return recursion(payload);
+    callback(null,recursion(payload));
   }
 }
