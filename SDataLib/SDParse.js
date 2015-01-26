@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var parser = require('xml2json');
 var xmldoc = require('xmldoc');
 var request = require('request');
@@ -20,33 +21,26 @@ module.exports.Get = function(getObj,callback){
   });
 },
 module.exports.parse = function(xml){
-  var resultsArray = [];
-  var resultsObj = {};
-
   // get all records
   var document = new xmldoc.XmlDocument(xml);
   var resNode = document.childrenNamed('entry');
 
   // iterate through records, parse and build return object
-  for (var i=0; i < 1;i++){
-    var buildObj = {};
+  for (var i=0; i < resNode.length;i++){
+
     var payload = resNode[i].childNamed('sdata:payload');
-    var handle = payload.firstChild;
-    var special = handle.childrenNamed(handle.firstChild.name);
-    console.log(special.length);
-    counter = 0;
-    var deleteNodes = [];
-    handle.eachChild(function(child, index, array){
-      counter++;
-      buildObj[child.name] = child.val;
-
-      if (counter === handle.children.length){
-        //console.log(buildObj);;
-        //console.log(json);
-        resultsArray.push(buildObj);
+    console.log(payload.length);
+    var recursion = function (xmlNode){
+      var tmpArray = [];
+      if(xmlNode.children.length < 1){
+        return xmlNode;
       }
-    });
+      var ret = [];
+      xmlNode.eachChild(function(child,index,array){
+        ret.push(recursion(child));
+      });
+      return ret;
+    };
+    return recursion(payload);
   }
-
-  return resultsObj = resultsArray;
 }

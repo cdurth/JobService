@@ -12,7 +12,7 @@ exports.sdata = function(req,res) {
 	ordersCtl.index(req,res,function(err,orders){
 		configObj = req.body.sdata;
 		records = orders["Records"];
-		var	query = "SO_SalesOrderHeaderSPECIAL?include=SO_SalesOrderHeaderSPECIALSECOND";
+		var	query = "SO_InvoiceHeaderSPECIAL?include=SO_InvoiceHeaderSPECIALSECOND";
 		configObj["query"] = query;
 		SDParse.Get(configObj,function(err,data){
 			res.type('application/json');
