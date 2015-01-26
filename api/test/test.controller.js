@@ -21,7 +21,7 @@ exports.sdata = function(req,res) {
 			//console.log(data);
 			//console.log(data.SO_InvoiceHeaderSPECIAL.SO_InvoiceHeaderSPECIALSECOND.LineKey);
 			var tst = JSON.stringify(data);
-			//res.type('application/json');
+			res.type('application/json');
 			res.send(tst);
 		});
 	});

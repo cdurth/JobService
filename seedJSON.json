@@ -3,7 +3,7 @@
     "jobid": "<jobid>",
     "timestamp": "<timestamp>",
     "sdata": {
-        "url": "http: //66.161.168.57/Sdata/MasApp/MasContract",
+        "url": "http://66.161.168.57/Sdata/MasApp/MasContract",
         "company": "ABC",
         "createCustomers": true,
         "defaultCustomer": "",

@@ -11,6 +11,7 @@ module.exports.Get = function(getObj,callback){
     auth:getObj.auth,
     rejectUnauthorized: false },
     function(err, r, b) {
+      console.log(err);
     if (err || r.statusCode !== 200) {
        console.log(r.body);
        console.log(r.statusCode + "\n" + err);
