@@ -8,7 +8,7 @@ var SFLib 	= require(appDir + '/SFLib/SFLib'),
 		SDParse = require(appDir +'/SdataLib/SDParse');
 
 // storefront libs
-var SF_Orders = require(appDir + 'SFLib/Orders');
+var SF_Orders = require(appDir + '/SFLib/Orders');
 
 // sage libs
 var AR_Customer 	= require(appDir + '/SDataLib/AR_Customer'),

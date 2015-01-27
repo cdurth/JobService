@@ -3,7 +3,6 @@ var appDir = path.dirname(require.main.filename);
 var querystring = require('querystring');
 var request = require('request');
 var ordersCtl = require(appDir + '/api/orders/orders.controller')
-var sDataParse = require(appDir + '/SDataLib/SDataParse');
 var SDParse=require(appDir + '/SDataLib/SDParse');
 var soap = require('soap');
 var xmldoc = require('xmldoc');
