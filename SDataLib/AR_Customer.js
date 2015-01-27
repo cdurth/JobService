@@ -30,9 +30,9 @@ module.exports = {
     SDParse.Get(configObj,function(err,results){
       var custMatched = function(order){
         for(var i = 0; i < results.length; i++){
-          if(results[i].EMAILADDRESS === order.email){
+          if(results[i].EmailAddress === order.email){
             // adds customer number to object if found
-             order["customerNo"] = results[i].CUSTOMERNO;
+             order["customerNo"] = results[i].CustomerNo;
           }
         }
 
@@ -48,7 +48,7 @@ module.exports = {
       // filters out existing customers & inserts customerNo
       var custMatched = function(element){
         for(var i = 0; i < results.length; i++){
-          if(results[i].EMAILADDRESS === element.email){
+          if(results[i].EmailAddress === element.email){
             return false;
           }
         }

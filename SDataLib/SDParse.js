@@ -1,6 +1,9 @@
 var _ = require('lodash');
 var xmldoc = require('xmldoc');
 var request = require('request');
+var fs = require('fs');
+var path = require('path');
+var appDir = path.dirname(require.main.filename);
 
 module.exports.Get = function(getObj,callback){
   var url = getObj.url +'/'+ getObj.company +'/'+ getObj.query;
@@ -42,6 +45,7 @@ module.exports.Post = function(postObj,callback){
        console.log(r.statusCode + "\n" + err);
        return;
     }
+
     module.exports.Parse(r.body,function(err,data){
       callback(err,data);
     });
@@ -54,7 +58,7 @@ module.exports.Parse = function(xml,callback){
   var retArray = [];
 
   // iterate through records, parse and build return object
-  for (var i=0; i < 2;i++){
+  for (var i=0; i < resNode.length ;i++){
     var payload = resNode[i].childNamed('sdata:payload').firstChild;
     var recursion = function (xmlNode){
      var ret = {};
