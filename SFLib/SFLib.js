@@ -1,6 +1,6 @@
-var parser = require('xml2json');
-var xmldoc = require('xmldoc');
-var request = require('request');
+var parser  = require('xml2json'),
+    xmldoc  = require('xmldoc'),
+    request = require('request');
 
 module.exports.encodeXML = function(s) {
   return s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); // TODO: find out if escaping double quote is necessary or not

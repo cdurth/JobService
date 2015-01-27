@@ -1,16 +1,11 @@
 'use strict'; //master
 
-var _ = require('lodash');
-var path = require('path');
-var appDir = path.dirname(require.main.filename);
-var request=require('request');
-var sDataParse=require(appDir + '/SDataLib/SDataParse');
+var _       = require('lodash'),
+    path    = require('path'),
+    appDir  = path.dirname(require.main.filename),
+    SDParse = require(appDir + '/SDataLib/SDParse');
 
 module.exports = {
-  createSalesOrder:function(configObj,order,callback){
-    callback(null,order);
-    
-  },
   validateCustomers:function(configObj,records,callback) {
     var emails = [];
     // build email array for checking existing customers
@@ -32,7 +27,7 @@ module.exports = {
     }
   },
   matchCustomers:function(configObj,emails,records,callback){
-    module.exports.SDataGet(configObj,function(err,results){
+    SDParse.Get(configObj,function(err,results){
       var custMatched = function(order){
         for(var i = 0; i < results.length; i++){
           if(results[i].EMAILADDRESS === order.email){
@@ -49,7 +44,7 @@ module.exports = {
     });
   },
   createCustomer:function(configObj,emails,records,callback){
-    module.exports.SDataGet(configObj,function(err,results){
+    SDParse.Get(configObj,function(err,results){
       // filters out existing customers & inserts customerNo
       var custMatched = function(element){
         for(var i = 0; i < results.length; i++){
@@ -87,11 +82,11 @@ module.exports = {
         if(err){
           //do stuff with error
         }
-      	count++;
-      	results[count] = result;
-      	if (count === totalCallbacks){
+        count++;
+        results[count] = result;
+        if (count === totalCallbacks){
           callback(null,results);
-      	}
+        }
       };
 
       for(var i = 0; i < custsToCreate.length; i++){
@@ -109,79 +104,8 @@ module.exports = {
 
         configObj["payload"] = payload;
         var test=configObj.url+'/'+configObj.company+'/'+configObj.query;
-				module.exports.SDataPost(configObj,myCallback);
-			}
-    });
-  },
-  SDataPost:function(postObj,callback){
-    var headers = {
-      'Content-Type': 'application/atom+xml;type=entry',
-    };
-    var returnObj = {};
-    var returnArray = [];
-    var sdPasreStream=sDataParse();
-    var url = postObj.url +'/'+ postObj.company +'/'+ postObj.busObj;
-
-    sdPasreStream.on('data',function(sDataObj){
-      returnArray.push(sDataObj);
-    });
-
-    sdPasreStream.on('end',function(){
-      returnObj = returnArray;
-      callback(null,returnObj);
-    });
-
-    var body = '<entry xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom"><sdata:payload>';
-        body+= '<'+ postObj.busObj +' sdata:uri="'+postObj.url+'/'+postObj.company+'/'+postObj.busObj+'" xmlns="">';
-        body+= postObj.payload;
-        body+= '</'+ postObj.busObj +'>';
-        body+= '</sdata:payload></entry>';
-
-
-    var r = request.post({
-      url:url,
-      headers:headers,
-      body:body,
-      auth:postObj.auth,
-      rejectUnauthorized: false
-    });
-
-    r.on('response', function (resp) {
-      if(resp.statusCode==200){
-        r.pipe(sdPasreStream);
-      } else {
-        callback(new Error('Bad Stuff'),null);
-      }
-    });
-  },
-  SDataGet:function(getObj,callback){
-    var returnObj = {};
-    var returnArray = [];
-    var sdPasreStream=sDataParse();
-    var url = getObj.url +'/'+ getObj.company +'/'+ getObj.query;
-
-    sdPasreStream.on('data',function(sDataObj){
-      returnArray.push(sDataObj);
-    });
-
-    sdPasreStream.on('end',function(){
-      returnObj = returnArray;
-      //returns json objects
-      callback(null,returnObj);
-    });
-
-    var r = request({
-        url:url,
-        auth:getObj.auth,
-        rejectUnauthorized: false
-    });
-
-    r.on('response', function (resp) {
-      if(resp.statusCode==200){
-        r.pipe(sdPasreStream);
-      } else {
-        callback(new Error('Bad Stuff'),null);
+        SDParse.Post(configObj,myCallback);
       }
     });
   }
-} // end exports
+}
