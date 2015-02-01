@@ -1,65 +1,68 @@
-var path = require('path'),
-    appDir = path.dirname(require.main.filename);
-
-var SFLib 	= require(appDir + '/SFLib/SFLib');
+var path = require('path');
+var SFLib = require('../SFLib');
+var xml2json = require('xml2json');
+var util = require('../util');
+var _ = require('lodash');
 
 module.exports = {
-  getNewOrders:function(callback){
-    finalObj = {};
-    finalObj["Timestamp"] = new Date();
-    importCount = 0;
-    var order_headers = 'SELECT OrderNumber,CustomerID,LastName,FirstName,Email,Phone,OrderTotal FROM dbo.Orders WHERE THUB_POSTED_DATE IS NULL'
-    var url = 'http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx';
-    var orderNumbers = [];
-    // query to get all new orders
-    SFLib.query(order_headers,url, function(err,ordersJSON){
-      tmpOrders = JSON.parse(ordersJSON);
-      orders = tmpOrders["AspDotNetStorefrontImportResult"]["Query"]["order"];
+  getNewOrdersQ: function(url, username, password) {
+    var headerQuery = 'SELECT OrderNumber,CustomerID,LastName,FirstName,Email,Phone,OrderTotal FROM dbo.Orders WHERE THUB_POSTED_DATE IS NULL';
+    return SFLib
+      .queryWithResultQ(url, username, password, headerQuery)
+      .then(function (result) {
+        parsedResult = JSON.parse(xml2json.toJson(result)); // parse xml to object
 
-      if (orders.constructor !== Array) {
-        orders = [orders];
-      }
+        // extract orders and order numbers
+        orders = parsedResult.AspDotNetStorefrontImportResult.Query.order;
+        if (orders.constructor !== Array) orders = [orders];
+        orderNumbers = orders.map(function (e) { return e.ordernumber; });
 
-      for(var order in orders){
-          orderNumbers.push(orders[order].ordernumber);
-      }
-      finalObj["RecordCount"] = orderNumbers.length;
-      // query to get all order details
-      var order_details = "SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN ('"+ orderNumbers.join("','") +"')";
-      SFLib.query(order_details,url, function(err,detailsJSON){
-        tmpDetails = JSON.parse(detailsJSON);
-        details = tmpDetails["AspDotNetStorefrontImportResult"]["Query"]["order"];
+        // create return value
+        ret = {};
+        ret.Timestamp = new Date();
+        ret.RecordCount = orderNumbers.length;
+        ret.Records = orders;
 
-        if (details.constructor !== Array) {
-          details = [details];
-        }
-        order = 0;
-        // build new orders object
-        for(var order in orders){
-            importCount++;
-            orders[order]["ImportNo"] = importCount;
-            orders[order]["lines"] = [];
-            for(var detail in details){
-              if (details[detail].OrderNumber === orders[order].ordernumber ) {
-                if(details[detail].ShippingDetail !== undefined){
-                  rawAddress = details[detail].ShippingDetail;
-                  // parse shipping data
-                  SFLib.parseAddress(rawAddress, function(err,addressJSON){
-                    tmpAddress = JSON.parse(addressJSON);
-                    address = tmpAddress["Detail"]["Address"];
-                    details[detail].ShippingDetail = address;
-                    orders[order].lines.push(details[detail]);
-                  });
-                } else {
-                  orders[order].lines.push(details[detail]);
-                }
-
+        // add lines to return value
+        return module.exports
+          .getOrderDetailsQ(url, username, password, orderNumbers)
+          .then(function(orderDetails) {
+            orderDetails.forEach(function (detail) {
+              // parse out shipping details
+              if (detail.ShippingDetail !== undefined) {
+                // REMOVED PARSING FOR MYSTERIOUS CHARACTERS AT ENDS OF STRING
+                addressJSON = JSON.parse(xml2json.toJson(util.decodeXML(detail.ShippingDetail)));
+                detail.ShippingDetail = addressJSON.Detail.Address;
               }
-            }
-        }
-        finalObj["Records"] = orders;
-        callback(null,finalObj);
+
+              // find corresponding order header
+              orderIndex = _.findIndex(orders, function(e) {
+                return e.ordernumber === detail.OrderNumber;
+              });
+
+              // if corresponding header found, push current detail to header lines
+              if (orderIndex >= 0) {
+                if (orders[orderIndex].lines === undefined) orders[orderIndex].lines = [];
+                orders[orderIndex].lines.push(detail);
+              }
+            });
+
+            return ret;
+          });
       });
-    });
+  },
+
+  getOrderDetailsQ: function(url, username, password, orderNumbers) {
+    var detailsQuery = 'SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN (\''+ orderNumbers.join('\',\'') + '\')';
+    return SFLib
+      .queryWithResultQ(url, username, password, detailsQuery)
+      .then(function (result) {
+        parsedResult = JSON.parse(xml2json.toJson(result));
+
+        details = parsedResult.AspDotNetStorefrontImportResult.Query.order;
+        if (details.constructor !== Array) details = [details];
+
+        return details;
+      });
   }
-}
+};
