@@ -7,6 +7,7 @@ var router = express.Router();
 router.get('/sflib', controller.sflib);
 router.post('/testCustomersExist', controller.testCustomersExist);
 router.post('/testCreateCustomers', controller.testCreateCustomers);
+router.post('/testProcess', controller.testProcess);
 router.post('/sdata', controller.sdata);
 
 //router.post('/sdata', controller.sdata);

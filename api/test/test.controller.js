@@ -3,6 +3,8 @@ var SFLib = require('../../SFLib');
 var Q = require('q');
 var config = require('../../config');
 var ARCustomer = require('../../SDataLib/ARCustomer');
+var OrdersCtl = require('../orders/orders.controller');
+var request = require('request');
 
 exports.sdata = function(req, res) {
 	ARCustomer
@@ -17,6 +19,29 @@ exports.sdata = function(req, res) {
 			res.send(results);
 		})
 		.done();
+};
+
+exports.testProcess = function (req, res) {
+	var body = {
+    sdata: {
+        url: "http://66.161.168.57/Sdata/MasApp/MasContract",
+        company: "ABC",
+        username: "SdataUser",
+        password: "password"
+    },
+    storefront: {
+        url: "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx",
+        username: "admin@aspdotnetstorefront.com",
+        password: "Admin$11"
+    }
+  };
+  var url = 'http://localhost:' + config.port + '/api/orders/process';
+  var headers = { 'Content-Type': 'application/json' };
+
+  request.post({url: url, headers: headers, body: JSON.stringify(body)}, function (err, innerRes) {
+  	if (err) return res.send(err.stack);
+  	res.send(innerRes.body);
+  });
 };
 
 exports.testCreateCustomers = function (req, res) {
