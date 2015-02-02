@@ -5,7 +5,9 @@ var router = express.Router();
 
 //router.get('/', controller.streamTest);
 router.get('/sflib', controller.sflib);
-router.get('/orders', controller.getOrders);
+router.post('/testCustomersExist', controller.testCustomersExist);
+router.post('/testCreateCustomers', controller.testCreateCustomers);
+router.post('/sdata', controller.sdata);
 
 //router.post('/sdata', controller.sdata);
 // router.delete('/:id', auth.hasRole('admin'), controller.destroy);
