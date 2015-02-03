@@ -1,41 +1,39 @@
-var path = require('path'),
-		appDir = path.dirname(require.main.filename),
-		request = require('request'),
-		fs = require('fs');
-
-// api libs
-var SFLib 	= require(appDir + '/SFLib/SFLib'),
-		SDParse = require(appDir +'/SdataLib/SDParse');
-
-// storefront libs
-var SF_Orders = require(appDir + '/SFLib/Orders');
-
-// sage libs
-var AR_Customer 	= require(appDir + '/SDataLib/AR_Customer'),
-		SO_SalesOrder = require(appDir + '/SDataLib/SO_SalesOrder');
+var SFOrders = require('../../SFLib/Orders');
+var ARCustomer = require('../../SDataLib/ARCustomer');
+var _ = require('lodash');
+var util = require('../../util');
 
 module.exports = {
-	process:function(req,res){
-		SF_Orders.getNewOrders(function(err,orders){
-			configObj = req.body.sdata;
-			records = orders["Records"];
-			AR_Customer.validateCustomers(configObj,records,function(err,orders){
-				// at this point, customers have been created & customerNo inserted
-				var count = 0;
-				var totalCallbacks = orders.length;
-				var results = [];
-				var myCallback = function(err,result){
-					count++;
-					results[count] = result;
-					if (count === totalCallbacks){
-						res.send(results);
-					}
-				};
+  process: function (req, res) {
+    var sdataObj = _.find(req.body.job.users,{'userType':'sdata'});
+    var sfObj = _.find(req.body.job.users,{'userType':'storefront'});
 
-				for(var i = 0; i < orders.length; i++){
-					SO_SalesOrder.createSalesOrder(configObj,orders[i],myCallback);
-				}
-			});
-		});
-	},
-}
+    // decrypt passwords
+    sdataObj['password'] = util.decryptPass(sdataObj.encryptedPass, sdataObj.salt);
+    sfObj['password'] = util.decryptPass(sfObj.encryptedPass, sfObj.salt);
+
+    // sdata options
+    sdataObj['url'] = _.find(req.body.job.data,{'key':'sdata_endpoint'}).value;
+    sdataObj['company'] = _.find(req.body.job.data,{'key':'sdata_company'}).value;
+    sdataObj['createCustomers'] = _.find(req.body.job.data,{'key':'sdata_createcustomers'}).value;
+
+    // storefront options
+    sfObj['url'] = _.find(req.body.job.data,{'key':'storefront_endpoint'}).value;
+
+    // var resObj=[sdataObj,sfObj];
+    // res.send(resObj);
+    SFOrders
+      .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password)
+      .then(function (results) {
+        newCustomers = results.Records.map(function (e) {
+          return { emailAddress: e.email, firstName: e.firstname, lastName: e.lastname };
+        });
+
+        return ARCustomer.createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers);
+      })
+      .then(function (results) {
+        res.send(results);
+      })
+      .done();
+  }
+};

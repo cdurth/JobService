@@ -9,6 +9,11 @@ var config = {
       name: 'jobservice'
     },
     port: 3000,
+    storefront: {
+      url: 'http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx',
+      username: 'admin@aspdotnetstorefront.com',
+      password: 'Admin$11'
+    }
   },
 
   test: {
