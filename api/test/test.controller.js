@@ -5,6 +5,16 @@ var config = require('../../config');
 var ARCustomer = require('../../SDataLib/ARCustomer');
 var OrdersCtl = require('../orders/orders.controller');
 var request = require('request');
+var util = require('../../util');
+
+exports.encrypt = function(req,res) {
+	var resObj = {};
+	var salt = util.makeSalt();
+	resObj['planText'] = req.param('pass');
+	resObj['salt'] = salt;
+	resObj['encrypted'] = util.encryptPass(req.param('pass'),salt);
+	res.send(resObj);
+};
 
 exports.sdata = function(req, res) {
 	ARCustomer
