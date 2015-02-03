@@ -1,25 +1,53 @@
 {
-    "user": "<userid>",
-    "jobid": "<jobid>",
-    "timestamp": "<timestamp>",
-    "sdata": {
-        "url": "http://66.161.168.57/Sdata/MasApp/MasContract",
-        "company": "ABC",
-        "createCustomers": true,
-        "defaultCustomer": "",
-        "auth": {
-            "username": "SdataUser",
-            "password": "password"
+    "accountUser": {
+        "_id": "54bff10570dbc4e4c29f81db",
+        "username": "user1"
+    },
+    "logDB": {
+        "endpoint": "jwF0iPxuER23KNI",
+        "user": {
+            "username": "fk9Yx0CYKGhti45",
+            "encryptedPass": "JZaT1BMWaypale1EUCRmig==",
+            "salt": "k78lONedvhJRBn1m+ofyhIMuF11rJ/QXSAYbJX9Nn7Fjp5tIMGPMX5cY7cXyk6TJaSnyALgEugUd/FmPwebs2eWOvOki+AyzJJTJC+5VgKoh32cg62lmeWPt8o7sCZlFEdisTgYJbgRgLs9U7CpRHZi9LchajmpkeZHl7/YOg3o="
         }
     },
-    "aspdsf": {
-        "url": "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx"
-    },
-    "logging": {
-        "url": "<monogurl/id>",
-        "auth": {
-            "username": "<username>",
-            "password": "<password>"
-        }
+    "job": {
+        "_id": "54bff10570dbc4e4c29f81df",
+        "name": "SDATA order import",
+        "type": 1,
+        "data": [
+            {
+                "key": "sdata_endpoint",
+                "value": "http://66.161.168.57/Sdata/MasApp/MasContract"
+            },
+            {
+                "key": "sdata_company",
+                "value": "ABC"
+            },
+            {
+                "key": "sdata_createcustomers",
+                "value": true
+            },
+            {
+                "key": "storefront_endpoint",
+                "value": "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx"
+            }
+        ],
+        "users": [
+            {
+                "_id": "54bff10570dbc4e4c29f81dd",
+                "username": "SdataUser",
+                "encryptedPass": "YNvYLjG599Do14KKGkOsBg==",
+                "salt": "09ah826wzKdRw5s46gM9pjZsCkdRbs0zVYgFXc+Mvc0su2Hd+uiP147SjriVcnkyiLmKBgk7fwWTT47CjJafiR0shGhrtP1lCjRp8cxQys38EMlJcPDjY0veTMmAKLaNAVImn8UoczOb12qnAgFNzOQrJrq1Q7el4a9x+NbttSM=",
+                "userType": "sdata"
+            },
+            {
+                "_id": "54bff10570dbc4e4c29f81de",
+                "username": "corey.durthaler@martinandassoc.com",
+                "encryptedPass": "MDhIq1hXH1RsbZoWvyBFbw==",
+                "salt": "Gg2LCYcPCKB1h3X6XJptpvOKUZIUtdSDu8fBlylTSlRY5qdtfLYggyqEWsB+vSQgfwu5/B9V2WaV68nlODAOE5G9wknCloTtH3gEINpzMdSY5rW+3qnQQpNdC3AYemdJDN5w4xmQJBBymS3V+fcWpqiUqi0sz/TGzxvq3U0U4F4=",
+                "userType": "storefront"
+            }
+        ]
     }
 }
