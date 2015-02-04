@@ -20,8 +20,6 @@ module.exports = {
     // storefront options
     sfObj['url'] = _.find(req.body.job.data,{'key':'storefront_endpoint'}).value;
 
-    // var resObj=[sdataObj,sfObj];
-    // res.send(resObj);
     SFOrders
       .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password)
       .then(function (results) {
@@ -29,9 +27,24 @@ module.exports = {
           return { emailAddress: e.email, firstName: e.firstname, lastName: e.lastname };
         });
 
-        return ARCustomer.createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers);
+        return ARCustomer
+          .createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers)
+          .then(function (customers){
+            // match customer by email and insert customer no
+            results.Records.forEach(function(order){
+              order['customerno'] = _.find(customers,{'EmailAddress': order.email}).CustomerNo;
+
+              if (_.isUndefined(order.customerno)){
+                // something went wrong and there is no customer
+                // do error handling and remove the order so it is not processed
+              }
+            });
+
+            return results;
+          });
       })
       .then(function (results) {
+        // at this point the results object is ready to begin sales order creation/processing
         res.send(results);
       })
       .done();
