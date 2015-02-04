@@ -1,5 +1,5 @@
 var SFOrders = require('../../SFLib/Orders');
-var ARCustomer = require('../../SDataLib/ARCustomer');
+var ARCustomer = require('../../SDataLib/AR_Customer');
 var _ = require('lodash');
 var util = require('../../util');
 
@@ -20,6 +20,8 @@ module.exports = {
     // storefront options
     sfObj['url'] = _.find(req.body.job.data,{'key':'storefront_endpoint'}).value;
 
+    // var resObj=[sdataObj,sfObj];
+    // res.send(resObj);
     SFOrders
       .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password)
       .then(function (results) {
@@ -39,12 +41,10 @@ module.exports = {
                 // do error handling and remove the order so it is not processed
               }
             });
-
-            return results;
+            return results
           });
       })
       .then(function (results) {
-        // at this point the results object is ready to begin sales order creation/processing
         res.send(results);
       })
       .done();
