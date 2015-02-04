@@ -58,9 +58,14 @@ module.exports = {
         return Q
           .allSettled(createCustPromises)
           .then(function (results) {
+            // error handling block, map result to createCustomers
             // TODO: create uniform return value for all customers, including the ones that were
             // filtered out, so user knows which customers were not created
             return results;
+          })
+          .then(function(custRecords){
+            var query = "EmailAddress eq '" + arrEmails.join("' or EmailAddress eq '") + "'";
+            return module.exports.getCustomersQ(baseUrl, username, password, company, query);
           });
       });
   }
