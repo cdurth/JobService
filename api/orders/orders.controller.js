@@ -1,5 +1,5 @@
 var SFOrders = require('../../SFLib/Orders');
-var ARCustomer = require('../../SDataLib/ARCustomer');
+var ARCustomer = require('../../SDataLib/AR_Customer');
 var _ = require('lodash');
 var util = require('../../util');
 
@@ -29,7 +29,20 @@ module.exports = {
           return { emailAddress: e.email, firstName: e.firstname, lastName: e.lastname };
         });
 
-        return ARCustomer.createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers);
+        return ARCustomer
+          .createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers)
+          .then(function (customers){
+            // match customer by email and insert customer no
+            results.Records.forEach(function(order){
+              order['customerno'] = _.find(customers,{'EmailAddress': order.email}).CustomerNo;
+
+              if (_.isUndefined(order.customerno)){
+                // something went wrong and there is no customer
+                // do error handling and remove the order so it is not processed
+              }
+            });
+            return results
+          });
       })
       .then(function (results) {
         res.send(results);

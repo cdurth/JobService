@@ -1,111 +1,72 @@
-'use strict'; //master
-
-var _       = require('lodash'),
-    path    = require('path'),
-    appDir  = path.dirname(require.main.filename),
-    SDParse = require(appDir + '/SDataLib/SDParse');
+var _ = require('lodash');
+var SDataLib = require('../SDataLib');
+var Q = require('q');
 
 module.exports = {
-  validateCustomers:function(configObj,records,callback) {
-    var emails = [];
-    // build email array for checking existing customers
-    emails = records.map(function(arg){
-      return arg.email
-    }).filter(function(item, pos, self) {
-        return self.indexOf(item) == pos;
-    });
+  getCustomersQ: function (baseUrl, username, password, company, query) {
+    if (!_.isUndefined(query) && !_.isNull(query))
+      query = 'AR_Customer?where=' + query;
+    else
+      query = 'AR_Customer';
 
-    // if createCustomer option, begin routine
-    if (configObj.createCustomers) {
-      var	query = "AR_Customer?where=EmailAddress eq '"+ emails.join("' or EmailAddress eq '") +"'";
-      configObj["query"] = query;
-      module.exports.createCustomer(configObj,emails,records,function(err,custs){
-        module.exports.matchCustomers(configObj,emails,records,function(err,res){
-          callback(null,res);
+    return SDataLib.GetParsedQ(baseUrl, username, password, company, query);
+  },
+
+  doCustomersExistQ: function (baseUrl, username, password, company, arrEmails) {
+    var query = "EmailAddress eq '" + arrEmails.join("' or EmailAddress eq '") + "'";
+    return module.exports
+      .getCustomersQ(baseUrl, username, password, company, query)
+      .then(function(results) {
+        existingCustomerEmails = results.map(function (e) { return e.EmailAddress; });
+
+        // construct return value
+        ret = {};
+        arrEmails.forEach(function (email) {
+          ret[email] = _.includes(existingCustomerEmails, email);
         });
+        return ret;
       });
-    }
   },
-  matchCustomers:function(configObj,emails,records,callback){
-    SDParse.Get(configObj,function(err,results){
-      var custMatched = function(order){
-        for(var i = 0; i < results.length; i++){
-          if(results[i].EmailAddress === order.email){
-            // adds customer number to object if found
-             order["customerNo"] = results[i].CustomerNo;
-          }
-        }
 
-      };
-      for (var i = 0; i < records.length; i++){
-        custMatched(records[i]);
-      }
-      callback(null,records);
-    });
-  },
-  createCustomer:function(configObj,emails,records,callback){
-    SDParse.Get(configObj,function(err,results){
-      // filters out existing customers & inserts customerNo
-      var custMatched = function(element){
-        for(var i = 0; i < results.length; i++){
-          if(results[i].EmailAddress === element.email){
-            return false;
-          }
-        }
-        return true;
-      };
+  createCustomersQ: function (baseUrl, username, password, company, arrCustomers) {
+    var arrEmails = arrCustomers.map(function (e) { return e.emailAddress; });
+    return module.exports
+      .doCustomersExistQ(baseUrl, username, password, company, arrEmails)
+      .then(function (customerResults) {
+        // filter out all customers that already exist
+        var createCustomers = arrCustomers.filter(function (e) {
+          return !customerResults[e.emailAddress];
+        });
 
-      var custsToCreate = records.filter(custMatched);
-      if (_.isEmpty(custsToCreate)){
-        // createCust option enabled, but no new customers to create, return
-        callback(null,null);
-      }
+        var createCustPromises = [];
+        createCustomers.forEach(function (cust) {
+          // give default values to firstName and lastName
+          if (_.isUndefined(cust.firstName) || _.isNull(cust.firstName)) cust.firstName = '';
+          if (_.isUndefined(cust.lastName) || _.isNull(cust.lastName)) cust.lastName = '';
 
-      // recalculate emails to build index
-      emails = custsToCreate.map(function(arg){
-        return arg.email
+          var payload =
+            '<ARDivisionNo>01</ARDivisionNo>' +
+            '<SalespersonDivisionNo>01</SalespersonDivisionNo>' +
+            '<SalespersonNo>0100</SalespersonNo>' +
+            '<CustomerName>' + cust.firstName + ' ' + cust.lastName + '</CustomerName>' +
+            '<EmailAddress>' + cust.emailAddress + '</EmailAddress>';
+
+          createCustPromises.push(SDataLib.PostQ(baseUrl, username, password, company, 'AR_Customer', payload));
+        });
+
+        // execute all promises, even if one fails
+        return Q
+          .allSettled(createCustPromises)
+          .then(function (results) {
+            // error handling block, map result to createCustomers
+            // TODO: create uniform return value for all customers, including the ones that were
+            // filtered out, so user knows which customers were not created
+            return results;
+          })
+          .then(function(custRecords){
+            var query = "EmailAddress eq '" + arrEmails.join("' or EmailAddress eq '") + "'";
+            return module.exports.getCustomersQ(baseUrl, username, password, company, query);
+          });
       });
-      // filter out duplicate records
-      custsToCreate = custsToCreate.filter(function(item, pos) {
-          if(emails.indexOf(item.email) == pos){
-            return true;
-          }
-        return false;
-      });
-
-      var busObj = "AR_Customer";
-      configObj["busObj"] = busObj;
-      var count = 0;
-      var totalCallbacks = custsToCreate.length;
-      var results = [];
-      var myCallback = function(err,result){
-        if(err){
-          //do stuff with error
-        }
-        count++;
-        results[count] = result;
-        if (count === totalCallbacks){
-          callback(null,results);
-        }
-      };
-
-      for(var i = 0; i < custsToCreate.length; i++){
-        if(_.isEmpty(custsToCreate[i].firstname)){
-          custsToCreate[i].firstname = "";
-        }
-        if (_.isEmpty(custsToCreate[i].lastname)){
-          custsToCreate[i].lastname = "";
-        }
-        var payload = '<ARDivisionNo>01</ARDivisionNo>';
-            payload+= '<SalespersonDivisionNo>01</SalespersonDivisionNo>';
-            payload+= '<SalespersonNo>0100</SalespersonNo>';
-            payload+= '<CustomerName>'+ custsToCreate[i].firstname +' '+ custsToCreate[i].lastname +'</CustomerName>';
-            payload+= '<EmailAddress>'+ custsToCreate[i].email +'</EmailAddress>';
-
-        configObj["payload"] = payload;
-        var test=configObj.url+'/'+configObj.company+'/'+configObj.query;
-        SDParse.Post(configObj,myCallback);
-      }
-    });
   }
-}
+};
