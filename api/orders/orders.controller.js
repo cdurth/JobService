@@ -34,7 +34,8 @@ module.exports = {
           .then(function (customers){
             // match customer by email and insert customer no
             results.Records.forEach(function(order){
-              order['customerno'] = _.find(customers,{'EmailAddress': order.email}).CustomerNo;
+              order['ARDivisionNo'] = _.find(customers,{'EmailAddress': order.email}).ARDivisionNo
+              order['CustomerNo']   = _.find(customers,{'EmailAddress': order.email}).CustomerNo;
 
               if (_.isUndefined(order.customerno)){
                 // something went wrong and there is no customer
@@ -45,6 +46,7 @@ module.exports = {
           });
       })
       .then(function (results) {
+
         res.send(results);
       })
       .done();
