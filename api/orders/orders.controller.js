@@ -2,6 +2,7 @@ var SFOrders = require('../../SFLib/Orders');
 var ARCustomer = require('../../SDataLib/AR_Customer');
 var _ = require('lodash');
 var util = require('../../util');
+var SOSalesOrder = require('../../SDataLib/SO_SalesOrder');
 
 module.exports = {
   process: function (req, res) {
@@ -46,8 +47,12 @@ module.exports = {
           });
       })
       .then(function (results) {
+        var arrOrders = results.Records;
+        SOSalesOrder.createSalesOrderQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, arrOrders)
+        .then(function(results){
+          res.send(results);
+        });
 
-        res.send(results);
       })
       .done();
   }
