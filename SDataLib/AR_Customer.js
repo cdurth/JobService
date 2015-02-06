@@ -43,15 +43,18 @@ module.exports = {
           // give default values to firstName and lastName
           if (_.isUndefined(cust.firstName) || _.isNull(cust.firstName)) cust.firstName = '';
           if (_.isUndefined(cust.lastName) || _.isNull(cust.lastName)) cust.lastName = '';
+          var busObj = 'AR_Customer';
 
           var payload =
+            '<'+ busObj +' sdata:uri="'+url+'" xmlns="">' +
             '<ARDivisionNo>01</ARDivisionNo>' +
             '<SalespersonDivisionNo>01</SalespersonDivisionNo>' +
             '<SalespersonNo>0100</SalespersonNo>' +
             '<CustomerName>' + cust.firstName + ' ' + cust.lastName + '</CustomerName>' +
-            '<EmailAddress>' + cust.emailAddress + '</EmailAddress>';
+            '<EmailAddress>' + cust.emailAddress + '</EmailAddress>' +
+            '</'+ busObj +'>';
 
-          createCustPromises.push(SDataLib.PostQ(baseUrl, username, password, company, 'AR_Customer', payload));
+          createCustPromises.push(SDataLib.PostQ(baseUrl, username, password, company, busObj, payload));
         });
 
         // execute all promises, even if one fails
