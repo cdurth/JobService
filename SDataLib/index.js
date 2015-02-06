@@ -34,9 +34,7 @@ module.exports.PostQ = function(baseUrl, username, password, company, busObj, pa
   var headers = { 'Content-Type': 'application/atom+xml;type=entry' };
   var url = baseUrl +'/'+ company +'/'+ busObj;
   var body = '<entry xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom"><sdata:payload>';
-      body+= '<'+ busObj +' sdata:uri="'+url+'" xmlns="">';
       body+= payload;
-      body+= '</'+ busObj +'>';
       body+= '</sdata:payload></entry>';
 
   request.post({

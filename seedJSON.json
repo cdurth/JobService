@@ -29,6 +29,10 @@
                 "value": true
             },
             {
+                "key":"sdata_taxcode",
+                "value": "CA"
+            },
+            {
                 "key": "storefront_endpoint",
                 "value": "http://demo.aspdotnetstorefront.martinandassoc.com/ipx.asmx"
             }
