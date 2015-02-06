@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var SDataLib = require('../SDataLib');
 var Q = require('q');
+var cError = require('../error');
 
 module.exports = {
   getItemsQ:function(baseUrl, username, password, company, query) {
@@ -19,14 +20,17 @@ module.exports = {
       .then(function(results) {
         var existingItems = results.map(function (e) { return e.ItemCode; });
         // construct return value
+        var badItems = [];
         ret = true;
         itemArr.forEach(function (item) {
           if(!_.includes(existingItems, item)){
-            console.log('not found');
-            ret = false;
-            //TODO: throw error and stop processing this order
+            badItems.push(item);
           }
         });
+
+        if(!_.isEmpty(badItems)){
+          throw badItems;
+        }
 
         return ret;
       });
