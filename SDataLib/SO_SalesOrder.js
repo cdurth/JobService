@@ -6,7 +6,7 @@ var cError = require('../error');
 
 
 module.exports = {
-  createSalesOrderQ:function(baseUrl, username, password, company, orders){
+  createSalesOrderQ:function(baseUrl, username, password, company, orders, logObj){
     var busObj = 'SO_SalesOrderHeaderSPECIAL?include=SO_SalesOrderHeaderSPECIALSECOND';
     var arrOrderPromises = [];
 
@@ -30,18 +30,18 @@ module.exports = {
           '<CustomerNo>'+ order.CustomerNo +'</CustomerNo>' +
         '</SO_SalesOrderHeaderSPECIAL>';
 
-      var createOrderPromise = CIItem.validateItemsQ(baseUrl, username, password, company,itemArr)
+      var createOrderPromise = CIItem.validateItemsQ(baseUrl, username, password, company,itemArr, logObj)
       .fail(function(err){
         if(err instanceof Error){
           // internal error
           console.log(err);
         } else {
           // item error
-          throw cError.InvalidItem(order.ordernumber,err);
+          throw cError.InvalidItem(order.ordernumber,err, logObj);
         }
       })
       .then(function(){
-        return SDataLib.PostQ(baseUrl, username, password, company, busObj, payload);
+        return SDataLib.PostQ(baseUrl, username, password, company, busObj, payload, logObj);
       });
       arrOrderPromises.push(createOrderPromise);
     });
@@ -55,8 +55,6 @@ module.exports = {
             successfulOrders.push(orders[i].ordernumber);
           }
         }
-        console.log(successfulOrders);
-
         return successfulOrders;
       });
   }

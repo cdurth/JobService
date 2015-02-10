@@ -4,7 +4,7 @@ var xml2json = require('xml2json');
 var Q = require('q');
 var util = require('../util');
 
-module.exports.queryQ = function(url, username, password, sql) { // refactored
+module.exports.queryQ = function(url, username, password, sql, logObj) { // refactored
   var defer = Q.defer();
 
   var body =
@@ -41,8 +41,8 @@ module.exports.queryQ = function(url, username, password, sql) { // refactored
   return defer.promise;
 };
 
-module.exports.queryWithResultQ = function (url, username, password, sql) {
-  return exports.queryQ(url, username, password, sql)
+module.exports.queryWithResultQ = function (url, username, password, sql, logObj) {
+  return exports.queryQ(url, username, password, sql, logObj)
     .then(function (res) {
       doc = new xmlDoc.XmlDocument(res.body);
       try {

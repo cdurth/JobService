@@ -3,19 +3,19 @@ var SDataLib = require('../SDataLib');
 var Q = require('q');
 
 module.exports = {
-  getCustomersQ: function (baseUrl, username, password, company, query) {
+  getCustomersQ: function (baseUrl, username, password, company, query, logObj) {
     if (!_.isUndefined(query) && !_.isNull(query))
       query = 'AR_Customer?where=' + query;
     else
       query = 'AR_Customer';
 
-    return SDataLib.GetParsedQ(baseUrl, username, password, company, query);
+    return SDataLib.GetParsedQ(baseUrl, username, password, company, query, logObj);
   },
 
-  doCustomersExistQ: function (baseUrl, username, password, company, arrEmails) {
+  doCustomersExistQ: function (baseUrl, username, password, company, arrEmails, logObj) {
     var query = "EmailAddress eq '" + arrEmails.join("' or EmailAddress eq '") + "'";
     return module.exports
-      .getCustomersQ(baseUrl, username, password, company, query)
+      .getCustomersQ(baseUrl, username, password, company, query, logObj)
       .then(function(results) {
         existingCustomerEmails = results.map(function (e) { return e.EmailAddress; });
 
@@ -28,10 +28,10 @@ module.exports = {
       });
   },
 
-  createCustomersQ: function (baseUrl, username, password, company, arrCustomers) {
+  createCustomersQ: function (baseUrl, username, password, company, arrCustomers, logObj) {
     var arrEmails = arrCustomers.map(function (e) { return e.emailAddress; });
     return module.exports
-      .doCustomersExistQ(baseUrl, username, password, company, arrEmails)
+      .doCustomersExistQ(baseUrl, username, password, company, arrEmails, logObj)
       .then(function (customerResults) {
         // filter out all customers that already exist
         var createCustomers = arrCustomers.filter(function (e) {
@@ -54,7 +54,7 @@ module.exports = {
             '<EmailAddress>' + cust.emailAddress + '</EmailAddress>' +
             '</'+ busObj +'>';
 
-          createCustPromises.push(SDataLib.PostQ(baseUrl, username, password, company, busObj, payload));
+          createCustPromises.push(SDataLib.PostQ(baseUrl, username, password, company, busObj, payload, logObj));
         });
 
         // execute all promises, even if one fails
@@ -68,7 +68,7 @@ module.exports = {
           })
           .then(function(custRecords){
             var query = "EmailAddress eq '" + arrEmails.join("' or EmailAddress eq '") + "'";
-            return module.exports.getCustomersQ(baseUrl, username, password, company, query);
+            return module.exports.getCustomersQ(baseUrl, username, password, company, query, logObj);
           });
       });
   }
