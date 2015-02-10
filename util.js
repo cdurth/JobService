@@ -1,4 +1,6 @@
 var crypto = require('crypto');
+var winston = require('winston');
+var MongoDB = require('winston-mongodb').MongoDB;
 
 module.exports = {
   encodeXML: function(s) {
@@ -33,5 +35,22 @@ module.exports = {
 
   makeSalt: function(){
     return crypto.randomBytes(128).toString('base64');
+  },
+
+  createLogger: function(logObj){
+    console.log(logObj);
+    var logger = new(winston.Logger)({
+        transports : [
+            new(winston.transports.MongoDB)({
+                db : logObj.db,
+                host : logObj.host,
+                port : logObj.port,
+                username : logObj.user.username,
+                password : module.exports.decryptPass(logObj.user.encryptedPass, logObj.user.salt)
+            })
+        ],
+    });
+
+    return logger;
   }
 };

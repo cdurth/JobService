@@ -2,7 +2,7 @@ var request = require('request');
 var Q = require('q');
 var xmldoc = require('xmldoc');
 
-module.exports.GetQ = function(baseUrl, username, password, company, query) {
+module.exports.GetQ = function(baseUrl, username, password, company, query, logObj) {
   var url = baseUrl +'/'+ company +'/'+ query;
   var defer = Q.defer();
 
@@ -22,14 +22,14 @@ module.exports.GetQ = function(baseUrl, username, password, company, query) {
   return defer.promise;
 };
 
-module.exports.GetParsedQ = function(baseUrl, username, password, company, query) {
-  return module.exports.GetQ(baseUrl, username, password, company, query)
+module.exports.GetParsedQ = function(baseUrl, username, password, company, query, logObj) {
+  return module.exports.GetQ(baseUrl, username, password, company, query, logObj)
     .then(function (result) {
-      return module.exports.Parse(result.body);
+      return module.exports.Parse(result.body, logObj);
     });
 };
 
-module.exports.PostQ = function(baseUrl, username, password, company, busObj, payload) {
+module.exports.PostQ = function(baseUrl, username, password, company, busObj, payload, logObj) {
   var defer = Q.defer();
   var headers = { 'Content-Type': 'application/atom+xml;type=entry' };
   var url = baseUrl +'/'+ company +'/'+ busObj;
@@ -55,14 +55,14 @@ module.exports.PostQ = function(baseUrl, username, password, company, busObj, pa
   return defer.promise;
 };
 
-module.exports.PostParsedQ = function(baseUrl, username, password, company, busObj, payload) {
-  return module.exports.PostQ(baseUrl, username, password, company, busObj, payload)
+module.exports.PostParsedQ = function(baseUrl, username, password, company, busObj, payload, logObj) {
+  return module.exports.PostQ(baseUrl, username, password, company, busObj, payload, logObj)
     .then(function (result) {
-      return module.exports.Parse(result.body);
+      return module.exports.Parse(result.body, logObj);
     });
 };
 
-module.exports.Parse = function(xml) { // TODO: refactor
+module.exports.Parse = function(xml, logObj) { // TODO: refactor
   var doc = new xmldoc.XmlDocument(xml);
   var resNode = doc.childrenNamed('entry');
   var retArray = [];

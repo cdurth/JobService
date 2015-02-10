@@ -4,19 +4,19 @@ var Q = require('q');
 var cError = require('../error');
 
 module.exports = {
-  getItemsQ:function(baseUrl, username, password, company, query) {
+  getItemsQ:function(baseUrl, username, password, company, query, logObj) {
     if (!_.isUndefined(query) && !_.isNull(query)) {
       query = 'CI_Item?where=' + query;
     } else {
       query = 'CI_Item';
     }
-    return SDataLib.GetParsedQ(baseUrl, username, password, company, query);
+    return SDataLib.GetParsedQ(baseUrl, username, password, company, query, logObj);
   },
-  validateItemsQ:function(baseUrl, username, password, company, itemArr) {
+  validateItemsQ:function(baseUrl, username, password, company, itemArr, logObj) {
     var query = "ItemCode eq '" + itemArr.join("' or ItemCode eq '").toString() + "'";
 
     return module.exports
-      .getItemsQ(baseUrl, username, password, company, query)
+      .getItemsQ(baseUrl, username, password, company, query, logObj)
       .then(function(results) {
         var existingItems = results.map(function (e) { return e.ItemCode; });
         // construct return value

@@ -4,11 +4,13 @@
         "username": "user1"
     },
     "logDB": {
-        "endpoint": "jwF0iPxuER23KNI",
+        "db": "pe5tyQiv",
+        "host": "proximus.modulusmongo.net",
+        "port": 27017,
         "user": {
-            "username": "fk9Yx0CYKGhti45",
-            "encryptedPass": "JZaT1BMWaypale1EUCRmig==",
-            "salt": "k78lONedvhJRBn1m+ofyhIMuF11rJ/QXSAYbJX9Nn7Fjp5tIMGPMX5cY7cXyk6TJaSnyALgEugUd/FmPwebs2eWOvOki+AyzJJTJC+5VgKoh32cg62lmeWPt8o7sCZlFEdisTgYJbgRgLs9U7CpRHZi9LchajmpkeZHl7/YOg3o="
+            "username": "admin",
+            "encryptedPass": "qxt/chUAvYnIdAXLqaG+bg==",
+            "salt": "mzoV3S+XWESjt+eE53WKPM0NugsIjtr8F/tRCuRSez7CG/TTuMU/cTNHwSyCs3xeR9prvZHdSGtNouMnPwP/Q8nbe/zSCCes5zQpPMx4T967jqJaqPstRHZU0PGeSsiFr3ldynZ0qQGfCC1+MYoGXSTLM3iMReiiTvrk+cxjzQY="
         }
     },
     "job": {

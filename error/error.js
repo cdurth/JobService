@@ -1,4 +1,4 @@
-module.exports = function(errorCode, result, type, message, innerError) {
+module.exports = function(errorCode, result, type, message, query, innerError) {
   var res;
   res = {};
   if (errorCode !== null) {
@@ -15,6 +15,9 @@ module.exports = function(errorCode, result, type, message, innerError) {
   }
   if (message !== null) {
     res.reason.message = message;
+  }
+  if (query !== null){
+    res.reason.query = query;
   }
   if (innerError !== null) {
     res.reason.innerError = innerError.stack;

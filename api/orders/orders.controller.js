@@ -6,8 +6,9 @@ var SOSalesOrder = require('../../SDataLib/SO_SalesOrder');
 
 module.exports = {
   process: function (req, res) {
-    var sdataObj = _.find(req.body.job.users,{'userType':'sdata'});
-    var sfObj = _.find(req.body.job.users,{'userType':'storefront'});
+    var sdataObj  = _.find(req.body.job.users,{'userType':'sdata'});
+    var sfObj     = _.find(req.body.job.users,{'userType':'storefront'});
+    var logObj    = req.body.logDB;
 
     // decrypt passwords
     sdataObj.password = util.decryptPass(sdataObj.encryptedPass, sdataObj.salt);
@@ -24,14 +25,14 @@ module.exports = {
     // var resObj=[sdataObj,sfObj];
     // res.send(resObj);
     SFOrders
-      .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password)
+      .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password, logObj)
       .then(function (results) {
         newCustomers = results.Records.map(function (e) {
           return { emailAddress: e.email, firstName: e.firstname, lastName: e.lastname };
         });
 
         return ARCustomer
-          .createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers)
+          .createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers, logObj)
           .then(function (customers){
             // match customer by email and insert customer no
             results.Records.forEach(function(order){
@@ -48,13 +49,16 @@ module.exports = {
       })
       .then(function (results) {
         var arrOrders = results.Records;
-        SOSalesOrder.createSalesOrderQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, arrOrders)
-        .then(function(results){
-          // TODO: update SF order here from results array
-          res.send(results);
+        SOSalesOrder.createSalesOrderQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, arrOrders, logObj)
+        .then(function(importedOrders){
+          if(!_.isEmpty(importedOrders)){
+            SFOrders
+              .updateOrdersCreatedQ(sfObj.url, sfObj.username, sfObj.password, importedOrders, logObj);
+          }
         });
-
       })
-      .done();
+      .done(function(){
+        res.send('done');
+      });
   }
 };
