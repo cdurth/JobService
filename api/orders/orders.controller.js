@@ -57,8 +57,13 @@ module.exports = {
           }
         });
       })
-      .done(function(){
+      .then(function(result) {
         res.send('done');
-      });
+      })
+      .fail(function(err) {
+        res.send(err);
+        console.log('Error Processing Orders: ' + JSON.stringify(err));
+      })
+      .done();
   }
 };

@@ -3,6 +3,7 @@ var request = require('request');
 var xml2json = require('xml2json');
 var Q = require('q');
 var util = require('../util');
+var error = require('../error');
 
 module.exports.queryQ = function(url, username, password, sql, logObj) { // refactored
   var defer = Q.defer();
@@ -45,6 +46,9 @@ module.exports.queryWithResultQ = function (url, username, password, sql, logObj
   return exports.queryQ(url, username, password, sql, logObj)
     .then(function (res) {
       doc = new xmlDoc.XmlDocument(res.body);
+      if (doc.descendantWithPath('soap:Body.soap:Fault') !== undefined) {
+        throw error.AuthenticationError(res, doc.valueWithPath('soap:Body.soap:Fault.soap:Reason.soap:Text'));
+      }
       try {
         var responseXml = doc.valueWithPath('soap:Body.DoItUsernamePwdResponse.DoItUsernamePwdResult');
         return responseXml;

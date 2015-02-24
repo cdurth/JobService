@@ -19,5 +19,11 @@ module.exports.InternalError = function(req, res, result, message, innerError, l
   if (innerError === null) {
     innerError = null;
   }
-  return console.log(res, 500, error(4, result, 'InternalError', message, innerError));
+  console.log(res, 500, error(4, result, 'InternalError', message, innerError));
+};
+
+module.exports.AuthenticationError = function(res, message, innerError) {
+  var err = error(5, 'StoreFront', 'AuthenticationError', message, null, null);
+  //console.log('error/index.js: ' + JSON.stringify(err));
+  return err;
 };
