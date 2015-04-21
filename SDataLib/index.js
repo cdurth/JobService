@@ -1,6 +1,8 @@
 var request = require('request');
 var Q = require('q');
 var xmldoc = require('xmldoc');
+var _ = require('lodash');
+var cError = require('../error');
 
 module.exports.GetQ = function(baseUrl, username, password, company, query, logObj) {
   var url = baseUrl +'/'+ company +'/'+ query;
@@ -48,7 +50,19 @@ module.exports.PostQ = function(baseUrl, username, password, company, busObj, pa
     rejectUnauthorized: false },
     function(err, r) {
       if (err) defer.reject(err);
-      defer.resolve(r.body);
+      var errObj = new xmldoc.XmlDocument(r.body).childNamed('sdata:diagnosis');
+      if(errObj){
+        // There is a SDATA error, build error object and log 
+        var retObj = {};
+        errObj.eachChild(function(child,index,array){
+          retObj[child.name] = child.val;
+        });
+
+        defer.reject(cError.SDATAPost(retObj,null,logObj));
+      } else {
+        defer.resolve(r.body);
+      }
+      
     }
   );
 

@@ -16,7 +16,7 @@
     "job": {
         "_id": "54bff10570dbc4e4c29f81df",
         "name": "SDATA order import",
-        "inputtype": 1,
+        "type": 1,
         "data": [
             {
                 "key": "sdata_endpoint",
@@ -29,8 +29,8 @@
             {
                 "key": "sdata_createcustomers",
                 "value": true
-            }
-,            {
+            },
+            {
                 "key":"sdata_taxcode",
                 "value": "CA"
             },
@@ -50,8 +50,8 @@
             {
                 "_id": "54bff10570dbc4e4c29f81de",
                 "username": "corey.durthaler@martinandassoc.com",
-                "encryptedPass": "fJbuTOjnD5zpnVXK1CXuHg==",
-                "salt": "L/HxKH5PDelc4BU8I9RWL+NMPrR/Zlosc1dYbQ+R1Li1JdHlKUxmSoYvDExVyGm5REypBHHkDov55leC2uuNQGUm/GF1R0cDRKxoVibl/9g7A3egNBuAtva/0hPvPoCJV74eM+VB0stkW+rOL5ftsJfDkaeDeamcdlls2S4jsic=",
+                "encryptedPass": "h4nUIqsa0pE4fhmCPGBAfg==",
+                "salt": "m4gX3WrjbIkfsyVRlFuusfjyoMQoL8+GA4Puy/OoftIz0F6DoKuxeF7gAy+qmBFanWmT2dLOaydj+zyeGpLy0c9+HqALZcag8hRrexdJLQHeLPcivh+13ZH6Ic8t0LSVOtmxsoniQKCYoj3rI9f0qzrT4FyRA3Mrk2bSKqGSm2w=",
                 "userType": "storefront"
             }
         ]

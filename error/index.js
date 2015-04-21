@@ -30,3 +30,10 @@ module.exports.SFQuery = function(res, message, innerError, logObj) {
   //console.log('error/index.js: ' + JSON.stringify(err));
   return err;
 };
+
+module.exports.SDATAPost = function(message, innerError, logObj) {
+  console.log('sdata post error');
+  var logger = util.createLogger(logObj);
+  var err = error(6,'SDATA','Post Error',message,null,null);
+  return logger.log('error','SDATA Post Error',err);
+};
