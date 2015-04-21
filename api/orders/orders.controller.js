@@ -18,12 +18,11 @@ module.exports = {
     sdataObj.url = _.find(req.body.job.data,{'key':'sdata_endpoint'}).value;
     sdataObj.company = _.find(req.body.job.data,{'key':'sdata_company'}).value;
     sdataObj.createCustomers = _.find(req.body.job.data,{'key':'sdata_createcustomers'}).value;
+    sdataObj.taxCode = _.find(req.body.job.data,{'key':'sdata_taxcode'}).value;
 
     // storefront options
     sfObj.url = _.find(req.body.job.data,{'key':'storefront_endpoint'}).value;
 
-    // var resObj=[sdataObj,sfObj];
-    // res.send(resObj);
     SFOrders
       .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password, logObj)
       .then(function (results) {
@@ -32,7 +31,7 @@ module.exports = {
         });
 
         return ARCustomer
-          .createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, newCustomers, logObj)
+          .createCustomersQ(sdataObj.url, sdataObj.username, sdataObj.password, sdataObj.company, sdataObj.taxCode, newCustomers, logObj)
           .then(function (customers){
             // match customer by email and insert customer no
             results.Records.forEach(function(order){
@@ -57,8 +56,13 @@ module.exports = {
           }
         });
       })
-      .done(function(){
+      .then(function(result) {
         res.send('done');
-      });
+      })
+      .fail(function(err) {
+        res.send(err);
+        console.log('Error Processing Orders: ' + JSON.stringify(err));
+      })
+      .done();
   }
 };

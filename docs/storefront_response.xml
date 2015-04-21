@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http:/schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+	<env:Header xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+		<wsa:Action>http://www.aspdotnetstorefront.com/DoItUsernamePwdResponse</wsa:Action>
+		<wsa:MessageID>urn:uuid:ef782de7-4233-4dcd-8a79-7b172a885812</wsa:MessageID>
+		<wsa:RelatesTo>urn:uuid:be1b1999-9c90-4682-875d-47569043b259</wsa:RelatesTo>
+		<wsa:To>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</wsa:To>
+		<wsse:Security>
+			<wsu:Timestamp wsu:Id="Timestamp-dc0a899a-9ea2-48ff-b8da-5c4c67817f55">
+				<wsu:Created>2015-02-24T15:47:44Z</wsu:Created>
+				<wsu:Expires>2015-02-24T15:52:44Z</wsu:Expires>
+			</wsu:Timestamp>
+		</wsse:Security>
+	</env:Header>
+	<soap:Body>
+	<DoItUsernamePwdResponse xmlns="http://www.aspdotnetstorefront.com/">
+		<DoItUsernamePwdResult>
+			&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;AspDotNetStorefrontImportResult Version="7.1" DateTime="2/24/2015 10:47:44 AM"&gt;&lt;Query Name="Orders"&gt;&lt;order&gt;&lt;ordernumber&gt;100157&lt;/ordernumber&gt;&lt;customerid&gt;58741&lt;/customerid&gt;&lt;lastname&gt;Durthaler&lt;/lastname&gt;&lt;firstname&gt;Corey&lt;/firstname&gt;&lt;email&gt;corey.durthaler@martinandassoc.com&lt;/email&gt;&lt;phone&gt;6145629704&lt;/phone&gt;&lt;ordertotal&gt;169.9900&lt;/ordertotal&gt;&lt;/order&gt;&lt;/Query&gt;&lt;/AspDotNetStorefrontImportResult&gt;
+		</DoItUsernamePwdResult>
+	</DoItUsernamePwdResponse>
+	</soap:Body>
+</soap:Envelope>

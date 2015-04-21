@@ -38,7 +38,6 @@ module.exports = {
   },
 
   createLogger: function(logObj){
-    console.log(logObj);
     var logger = new(winston.Logger)({
         transports : [
             new(winston.transports.MongoDB)({
@@ -50,7 +49,6 @@ module.exports = {
             })
         ],
     });
-
     return logger;
   }
 };

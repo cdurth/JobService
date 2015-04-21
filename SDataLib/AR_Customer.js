@@ -28,7 +28,7 @@ module.exports = {
       });
   },
 
-  createCustomersQ: function (baseUrl, username, password, company, arrCustomers, logObj) {
+  createCustomersQ: function (baseUrl, username, password, company, taxCode, arrCustomers, logObj) {
     var arrEmails = arrCustomers.map(function (e) { return e.emailAddress; });
     return module.exports
       .doCustomersExistQ(baseUrl, username, password, company, arrEmails, logObj)
@@ -46,12 +46,13 @@ module.exports = {
           var busObj = 'AR_Customer';
 
           var payload =
-            '<'+ busObj +' sdata:uri="'+url+'" xmlns="">' +
+            '<'+ busObj +' sdata:uri="' + baseUrl +'/'+ company +'/'+ busObj + '" xmlns="">' +
             '<ARDivisionNo>01</ARDivisionNo>' +
             '<SalespersonDivisionNo>01</SalespersonDivisionNo>' +
             '<SalespersonNo>0100</SalespersonNo>' +
             '<CustomerName>' + cust.firstName + ' ' + cust.lastName + '</CustomerName>' +
             '<EmailAddress>' + cust.emailAddress + '</EmailAddress>' +
+            '<TaxSchedule>' + taxCode + '</TaxSchedule>' +
             '</'+ busObj +'>';
 
           createCustPromises.push(SDataLib.PostQ(baseUrl, username, password, company, busObj, payload, logObj));

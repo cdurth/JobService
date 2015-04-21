@@ -1,5 +1,6 @@
 module.exports = function(app) {
   // Insert routes below
+  app.use('/api', require('./api/router'));
   app.use('/api/test', require('./api/test'));
   app.use('/api/orders', require('./api/orders'));
 

@@ -7,6 +7,12 @@ var OrdersCtl = require('../orders/orders.controller');
 var request = require('request');
 var util = require('../../util');
 
+exports.decrypt = function(req,res) {
+	var resObj = {};
+	resObj['pass:'] = util.decryptPass("fJbuTOjnD5zpnVXK1CXuHg==", "L/HxKH5PDelc4BU8I9RWL+NMPrR/Zlosc1dYbQ+R1Li1JdHlKUxmSoYvDExVyGm5REypBHHkDov55leC2uuNQGUm/GF1R0cDRKxoVibl/9g7A3egNBuAtva/0hPvPoCJV74eM+VB0stkW+rOL5ftsJfDkaeDeamcdlls2S4jsic=");
+	res.send(resObj);
+};
+
 exports.encrypt = function(req,res) {
 	var resObj = {};
 	var salt = util.makeSalt();

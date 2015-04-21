@@ -22,6 +22,6 @@ module.exports = function(errorCode, result, type, message, query, innerError) {
   if (innerError !== null) {
     res.reason.innerError = innerError.stack;
   }
-  console.log(res);
+  //console.log(res);
   return res;
 };

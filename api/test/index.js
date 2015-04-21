@@ -10,6 +10,7 @@ router.post('/testCreateCustomers', controller.testCreateCustomers);
 router.post('/testProcess', controller.testProcess);
 router.post('/sdata', controller.sdata);
 router.get('/encrypt/:pass', controller.encrypt);
+router.get('/decrypt', controller.decrypt);
 
 //router.post('/sdata', controller.sdata);
 // router.delete('/:id', auth.hasRole('admin'), controller.destroy);
