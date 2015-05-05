@@ -1,0 +1,7 @@
+Required UDF's
+	-SO Sales Order Header - UDF_SF_ORDER_NO
+	Source To:
+		-SO Invoice Header - UDF_SF_ORDER_NO
+		-AR Transaction Posting - UDF_SF_ORDER_NO
+		-AR Invoice History Header - UDF_SF_ORDER_NO
+		

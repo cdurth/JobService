@@ -1,0 +1,20 @@
+<OrderManagement Action="MarkAsShipped" OrderNumber="100168" Notes="test notes" ShippedCarrier="USPS" TrackingNumber="123456789" Weight="100.0" />
+
+<?xml version='1.0' encoding='UTF-8'?>
+	<s12:Envelope xmlns:s12="http://www.w3.org/2003/05/soap-envelope">
+		<s12:Body>
+			<ns1:DoItUsernamePwd xmlns:ns1="http://www.aspdotnetstorefront.com/">      
+				<ns1:AuthenticationEMail>corey.durthaler@martinandassoc.com</ns1:AuthenticationEMail>      
+				<ns1:AuthenticationPassword>Sconnect123!</ns1:AuthenticationPassword>      
+				<ns1:XmlInputRequestString><AspDotNetStorefrontImport Version="7.1" SetImportFlag="true" AutoLazyAdd="true" AutoCleanup="true" Verbose="false" TransactionsEnabled="true">  
+					<Query Name="Orders" RowName="order">    
+						<SQL>
+							<![CDATA[SELECT OrderNumber,CustomerID,LastName,FirstName,Email,Phone,OrderTotal FROM dbo.Orders WHERE THUB_POSTED_DATE IS NULL]]>
+						</SQL>  
+					</Query></AspDotNetStorefrontImport>      
+				</ns1:XmlInputRequestString>    
+			</ns1:DoItUsernamePwd>  
+		</s12:Body>
+	</s12:Envelope>
+
+&lt;AspDotNetStorefrontImport Version=&quot;7.1&quot; SetImportFlag=&quot;true&quot; AutoLazyAdd=&quot;true&quot; AutoCleanup=&quot;true&quot; Verbose=&quot;false&quot; TransactionsEnabled=&quot;true&quot;&gt;  &lt;Query Name=&quot;Orders&quot; RowName=&quot;order&quot;&gt;    &lt;SQL&gt;&lt;![CDATA[SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN ('100157')]]&gt;&lt;/SQL&gt;  &lt;/Query&gt;&lt;/AspDotNetStorefrontImport&gt;

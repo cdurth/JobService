@@ -7,7 +7,6 @@ var cError = require('../error');
 module.exports.GetQ = function(baseUrl, username, password, company, query, logObj) {
   var url = baseUrl +'/'+ company +'/'+ query;
   var defer = Q.defer();
-
   request.get({
     url: url,
     auth: {
@@ -38,7 +37,7 @@ module.exports.PostQ = function(baseUrl, username, password, company, busObj, pa
   var body = '<entry xmlns:sdata="http://schemas.sage.com/sdata/2008/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.w3.org/2005/Atom"><sdata:payload>';
       body+= payload;
       body+= '</sdata:payload></entry>';
-
+console.log(body);
   request.post({
     url: url,
     headers: headers,

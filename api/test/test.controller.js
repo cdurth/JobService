@@ -9,7 +9,7 @@ var util = require('../../util');
 
 exports.decrypt = function(req,res) {
 	var resObj = {};
-	resObj['pass:'] = util.decryptPass("fJbuTOjnD5zpnVXK1CXuHg==", "L/HxKH5PDelc4BU8I9RWL+NMPrR/Zlosc1dYbQ+R1Li1JdHlKUxmSoYvDExVyGm5REypBHHkDov55leC2uuNQGUm/GF1R0cDRKxoVibl/9g7A3egNBuAtva/0hPvPoCJV74eM+VB0stkW+rOL5ftsJfDkaeDeamcdlls2S4jsic=");
+	resObj['pass:'] = util.decryptPass("YNvYLjG599Do14KKGkOsBg==", "09ah826wzKdRw5s46gM9pjZsCkdRbs0zVYgFXc+Mvc0su2Hd+uiP147SjriVcnkyiLmKBgk7fwWTT47CjJafiR0shGhrtP1lCjRp8cxQys38EMlJcPDjY0veTMmAKLaNAVImn8UoczOb12qnAgFNzOQrJrq1Q7el4a9x+NbttSM=");
 	res.send(resObj);
 };
 

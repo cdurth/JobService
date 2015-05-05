@@ -17,10 +17,10 @@ module.exports = {
     return module.exports
       .getCustomersQ(baseUrl, username, password, company, query, logObj)
       .then(function(results) {
-        existingCustomerEmails = results.map(function (e) { return e.EmailAddress; });
+        var existingCustomerEmails = results.map(function (e) { return e.EmailAddress; });
 
         // construct return value
-        ret = {};
+        var ret = {};
         arrEmails.forEach(function (email) {
           ret[email] = _.includes(existingCustomerEmails, email);
         });

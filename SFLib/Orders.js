@@ -1,4 +1,3 @@
-var path = require('path');
 var SFLib = require('../SFLib');
 var xml2json = require('xml2json');
 var xmlDoc  = require('xmldoc');
@@ -8,19 +7,22 @@ var cError = require('../error');
 
 module.exports = {
   getNewOrdersQ: function(url, username, password, logObj) {
-    var headerQuery = 'SELECT OrderNumber,CustomerID,LastName,FirstName,Email,Phone,OrderTotal FROM dbo.Orders WHERE THUB_POSTED_DATE IS NULL';
+    var sqlQuery = 'SELECT OrderNumber,CustomerID,LastName,FirstName,Email,Phone,OrderTotal FROM dbo.Orders WHERE THUB_POSTED_DATE IS NULL';
+    var headerQuery = '  <Query Name="Orders" RowName="order">' +
+                       '    <SQL><![CDATA['+ sqlQuery +']]></SQL>' +
+                       '  </Query>';
     return SFLib
       .queryWithResultQ(url, username, password, headerQuery, logObj)
       .then(function (result) {
-        parsedResult = JSON.parse(xml2json.toJson(result)); // parse xml to object
+        var parsedResult = JSON.parse(xml2json.toJson(result)); // parse xml to object
 
         // extract orders and order numbers
-        orders = parsedResult.AspDotNetStorefrontImportResult.Query.order;
+        var orders = parsedResult.AspDotNetStorefrontImportResult.Query.order;
         if (orders.constructor !== Array) orders = [orders];
-        orderNumbers = orders.map(function (e) { return e.ordernumber; });
+        var orderNumbers = orders.map(function (e) { return e.ordernumber; });
 
         // create return value
-        ret = {};
+        var ret = {};
         ret.Timestamp = new Date();
         ret.RecordCount = orderNumbers.length;
         ret.Records = orders;
@@ -33,12 +35,12 @@ module.exports = {
               // parse out shipping details
               if (detail.ShippingDetail !== undefined) {
                 // REMOVED PARSING FOR MYSTERIOUS CHARACTERS AT ENDS OF STRING
-                addressJSON = JSON.parse(xml2json.toJson(util.decodeXML(detail.ShippingDetail)));
+                var addressJSON = JSON.parse(xml2json.toJson(util.decodeXML(detail.ShippingDetail)));
                 detail.ShippingDetail = addressJSON.Detail.Address;
               }
 
               // find corresponding order header
-              orderIndex = _.findIndex(orders, function(e) {
+              var orderIndex = _.findIndex(orders, function(e) {
                 return e.ordernumber === detail.OrderNumber;
               });
 
@@ -55,13 +57,16 @@ module.exports = {
   },
 
   getOrderDetailsQ: function(url, username, password, orderNumbers, logObj) {
-    var detailsQuery = 'SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN (\''+ orderNumbers.join('\',\'') + '\')';
+    var sqlQuery = 'SELECT * FROM dbo.Orders_ShoppingCart WHERE OrderNumber IN (\''+ orderNumbers.join('\',\'') + '\')';
+    var detailsQuery = '  <Query Name="Orders" RowName="order">' +
+                       '    <SQL><![CDATA['+ sqlQuery +']]></SQL>' +
+                       '  </Query>';
     return SFLib
       .queryWithResultQ(url, username, password, detailsQuery, logObj)
       .then(function (result) {
-        parsedResult = JSON.parse(xml2json.toJson(result));
+        var parsedResult = JSON.parse(xml2json.toJson(result));
 
-        details = parsedResult.AspDotNetStorefrontImportResult.Query.order;
+        var details = parsedResult.AspDotNetStorefrontImportResult.Query.order;
         if (details.constructor !== Array) details = [details];
 
         return details;
@@ -74,7 +79,10 @@ module.exports = {
       .toISOString()
       .replace(/T/, ' ')
       .replace(/\..+/, '') ;
-    var updateQuery = 'UPDATE dbo.Orders SET THUB_POSTED_DATE = \''+ date +'\'  WHERE OrderNumber IN (\''+ orderNumbers.join('\',\'') + '\')';
+    var sqlQuery = 'UPDATE dbo.Orders SET THUB_POSTED_DATE = \''+ date +'\'  WHERE OrderNumber IN (\''+ orderNumbers.join('\',\'') + '\')';
+    var updateQuery = '  <Query Name="Orders" RowName="order">' +
+                      '    <SQL><![CDATA['+ sqlQuery +']]></SQL>' +
+                      '  </Query>';
 
     return SFLib
       .queryWithResultQ(url, username, password, updateQuery, logObj)

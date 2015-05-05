@@ -15,13 +15,14 @@ module.exports = {
       var itemArr = order.lines.map(function (e) {
         return e.OrderedProductSKU;
       });
+
       //details
-      var shipping;
+      var shipping,orderNo;
       var payload =
         '<SO_SalesOrderHeaderSPECIAL sdata:uri="'+ baseUrl +'/'+ company +'/'+ 'SO_SalesOrderHeaderSPECIA' +'" xmlns="">';
           var lineCount = 0;
           order.lines.forEach(function(line){
-          lineCount++
+          lineCount++;
 
             payload +=
             '<SO_SalesOrderHeaderSPECIALSECOND>' +
@@ -31,15 +32,17 @@ module.exports = {
             '</SO_SalesOrderHeaderSPECIALSECOND>';
 
             //Process shipping information for first item ONLY
-            if (lineCount = 1) {
+            if (lineCount === 1) {
+              orderNo = line.OrderNumber;
               shipping = module.exports.validateShippingAddress(line.ShippingDetail,logObj);
-            }                        
+            }
           });
           
           payload +=
           // header
           '<ARDivisionNo>'+ order.ARDivisionNo +'</ARDivisionNo>' +
-          '<CustomerNo>'+ order.CustomerNo +'</CustomerNo>';
+          '<CustomerNo>'+ order.CustomerNo +'</CustomerNo>' +
+          '<UDF_SF_ORDER_NO>'+ orderNo + '</UDF_SF_ORDER_NO>';
           payload += shipping;
           payload += '</SO_SalesOrderHeaderSPECIAL>';
 
@@ -66,7 +69,7 @@ module.exports = {
         for(var i=0; i < results.length; i++){
           if(results[i].state === 'fulfilled'){
             successfulOrders.push(orders[i].ordernumber);
-          } 
+          }
         }
         return successfulOrders;
       });
@@ -79,7 +82,7 @@ module.exports = {
     retObj = '<ShipToName>'+ shippingDetail.FirstName + ' '+ shippingDetail.LastName +'</ShipToName>' + '<ShipToAddress1>'+ shippingDetail.Address1 + '</ShipToAddress1>';
 
     if(!_.isEmpty(shippingDetail.Address2)){
-       retObj += '<ShipToAddress2>'+ shippingDetail.Address2 +'</ShipToAddress2>'
+       retObj += '<ShipToAddress2>'+ shippingDetail.Address2 +'</ShipToAddress2>';
     }
     if(!_.isEmpty(shippingDetail.Address3)){
       retObj += '<ShipToAddress3>'+ shippingDetail.Suite +'</ShipToAddress3>';

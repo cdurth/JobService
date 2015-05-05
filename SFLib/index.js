@@ -5,8 +5,9 @@ var Q = require('q');
 var util = require('../util');
 var cError = require('../error');
 
-module.exports.queryQ = function(url, username, password, sql, logObj) { // refactored
+module.exports.queryQ = function(url, username, password, query, logObj) { // refactored
   var defer = Q.defer();
+ //TODO: url is undefined
 
   var body =
     '<?xml version=\'1.0\' encoding=\'UTF-8\'?>' +
@@ -18,9 +19,7 @@ module.exports.queryQ = function(url, username, password, sql, logObj) { // refa
     '      <ns1:XmlInputRequestString>' +
              util.encodeXML(
                '<AspDotNetStorefrontImport Version="7.1" SetImportFlag="true" AutoLazyAdd="true" AutoCleanup="true" Verbose="false" TransactionsEnabled="true">' +
-               '  <Query Name="Orders" RowName="order">' +
-               '    <SQL><![CDATA['+ sql +']]></SQL>' +
-               '  </Query>' +
+                  query +
                '</AspDotNetStorefrontImport>'
              ) +
     '      </ns1:XmlInputRequestString>' +
@@ -36,20 +35,20 @@ module.exports.queryQ = function(url, username, password, sql, logObj) { // refa
 
   request.post({url: url, headers: headers, body: body}, function (err, res) {
     if (err){
+      console.log(err.stack);
       return defer.reject(err);
-    } 
+    }
     defer.resolve(res);
   });
 
   return defer.promise;
 };
-
 module.exports.queryWithResultQ = function (url, username, password, sql, logObj) {
   return exports.queryQ(url, username, password, sql, logObj)
     .then(function (res) {
-      doc = new xmlDoc.XmlDocument(res.body);
+      var doc = new xmlDoc.XmlDocument(res.body);
       if (doc.descendantWithPath('soap:Body.soap:Fault') !== null) {
-        console.log(doc.descendantWithPath('soap:Body.soap:Fault'));
+        console.log(doc.valueWithPath('soap:Body.soap:Fault.soap:Reason.soap:Text'));
         throw cError.SFQuery(res, doc.valueWithPath('soap:Body.soap:Fault.soap:Reason.soap:Text'),null,logObj);
       }
       try {

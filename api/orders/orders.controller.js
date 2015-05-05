@@ -26,7 +26,7 @@ module.exports = {
     SFOrders
       .getNewOrdersQ(sfObj.url, sfObj.username, sfObj.password, logObj)
       .then(function (results) {
-        newCustomers = results.Records.map(function (e) {
+        var newCustomers = results.Records.map(function (e) {
           return { emailAddress: e.email, firstName: e.firstname, lastName: e.lastname };
         });
 

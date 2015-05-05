@@ -21,7 +21,7 @@ module.exports = {
         var existingItems = results.map(function (e) { return e.ItemCode; });
         // construct return value
         var badItems = [];
-        ret = true;
+        var ret = true;
         itemArr.forEach(function (item) {
           if(!_.includes(existingItems, item)){
             badItems.push(item);

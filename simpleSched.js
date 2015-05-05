@@ -12,9 +12,9 @@ var body = {
     "host": "proximus.modulusmongo.net",
     "port": 27017,
     "user": {
-      "username": "LoggingUser",
-      "encryptedPass": "fguGQJTRr9IWtUkkxA6D3Q==",
-      "salt": "HVw3+mU+5i1fQciayX4iz0eQTE3QorIcS434MIeg6x6B3V0oPLJsOEBWKENhdx+M+eVBj8wKQBy9NPqf1KNRS6yjbzfEdIjrlod0R5lhCjkJ+JhLOJzZxjWoiV+5o/xercWxdXXgoQ9biapz3wbue2X/f8u0qM6+Na0d/qNZB2c="
+      "username": "admin",
+      "encryptedPass": "qxt/chUAvYnIdAXLqaG+bg==",
+      "salt": "mzoV3S+XWESjt+eE53WKPM0NugsIjtr8F/tRCuRSez7CG/TTuMU/cTNHwSyCs3xeR9prvZHdSGtNouMnPwP/Q8nbe/zSCCes5zQpPMx4T967jqJaqPstRHZU0PGeSsiFr3ldynZ0qQGfCC1+MYoGXSTLM3iMReiiTvrk+cxjzQY="
     }
   },
   "job": {
@@ -72,4 +72,4 @@ setInterval(function() {
       console.log("POST sent");
     } 
   });
-}, 45000);
+}, 10000);
